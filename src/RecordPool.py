@@ -1,4 +1,5 @@
 import os
+import sys
 import platform
 
 from tqdm import tqdm
@@ -31,7 +32,8 @@ class RecordPool:
             self.chrome_driver = os.path.join(user_path, "Dropbox/CODE/webdriver/chromedriver")
 
         else:
-            raise RuntimeError(f"Unsupported OS \"{platform.system()}\"")
+            printColor(f"Unsupported OS \"{platform.system()}\"", Color.red)
+            sys.exit()
 
         self.download_path = os.path.join(download_root, self.folder)
 
@@ -102,7 +104,8 @@ class RecordPool:
             self.current_url = self.driver.current_url
 
         except InvalidArgumentException:
-            raise RuntimeError("Chrome already running. Close Chrome and try again...")
+            printColor("Chrome already running. Close Chrome and try again...", Color.red)
+            sys.exit()
 
         print("\nDownloader initialized for:\n" + repr(self))
 

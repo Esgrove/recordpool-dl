@@ -1,3 +1,3 @@
 @echo off
-python RecordPoolDownloader.py
+python src/RecordPoolDownloader.py
 pause
