@@ -34,6 +34,7 @@ class BPMSupreme(RecordPool):
                              "Reggae",
                              "Reggaeton",
                              "Rock",
+                             "Salsa",
                              "Scratch Tools",
                              "Soca")
 
@@ -75,11 +76,10 @@ class BPMSupreme(RecordPool):
             self.reload_page()
 
         try:
-            time.sleep(0.5)
             element = WebDriverWait(self.driver, 5).until(
                 expected_conditions.element_to_be_clickable((By.XPATH, "//a[@aria-label='Next']"))
             )
-            element.click()
+            self.driver.execute_script("arguments[0].click()", element)
 
         except (ElementNotInteractableException, ElementClickInterceptedException, TimeoutException):
             self.current_num += 1
