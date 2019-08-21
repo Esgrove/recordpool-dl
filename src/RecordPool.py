@@ -24,7 +24,7 @@ class RecordPool:
         if platform.system().lower() == "windows":
             download_root = os.path.join("D:\\", "Dropbox", "DJ MUSIC SORT")
             chrome_profile = os.path.join(user_path, "AppData\\Local\\Google\\Chrome\\User Data")
-            self.chrome_driver = "D:\\Dropbox\\CODE\\webdriver\\chromedriver.exe"
+            self.chrome_driver = "C:\\ProgramData\\chocolatey\\bin\\chromedriver.exe"
 
         elif platform.system().lower() == "darwin":
             download_root = os.path.join(user_path, "Dropbox", "DJ MUSIC SORT")

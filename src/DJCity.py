@@ -11,12 +11,12 @@ class DJCity(RecordPool):
 
         self.filter = ""
         self.genres = ("hiphop", "house", "latin", "pop", "r&b", "reggae", "other")
-        self.genremap = dict(zip(self.genres, ("c1", "c2", "c3", "c4", "c5", "c6", "c8")))
+        self.genre_map = dict(zip(self.genres, ("c1", "c2", "c3", "c4", "c5", "c6", "c8")))
 
     def get_tracks(self, number=0) -> list:
         playlist = self.driver.find_element_by_css_selector(".float_left.page_left")
         links = playlist.find_elements_by_css_selector(".downloadBtn")
-        num = number if number and len(links) >= number else len(links)
+        num = min(number, len(links)) if number > 0 else len(links)
         track_links = []
         for link in links[:num]:
             url = link.get_attribute("href")
@@ -93,7 +93,7 @@ class DJCity(RecordPool):
         print("Genres: {}".format(getColor(", ".join(genres), Color.yellow)))
         self.filter = "&f=ddfilter"
         for genre in genres:
-            genre_id = self.genremap[genre.lower()]
+            genre_id = self.genre_map[genre.lower()]
             self.filter += f"&{genre_id}=on"
 
         self.current_url = f"https://www.djcity.com/uk/digital/records.aspx?p={self.current_num}"

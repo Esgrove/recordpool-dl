@@ -16,9 +16,26 @@ from RecordPool import RecordPool
 class BPMSupreme(RecordPool):
     def __init__(self):
         super().__init__("BPMSupreme", "BPMSUPREME")
-        self.url = "https://www.bpmsupreme.com/store/newreleases/audio/smart"
+        self.url = "https://www.bpmsupreme.com/store/newreleases/audio/classic/1"
 
-        self.ignore = ("Short Edit", "Clean Short Edit", "Dirty Short Edit", "Quick Hit Clean", "Quick Hit")
+        self.track_ignore = ("Short Edit",
+                             "Clean Short Edit",
+                             "Dirty Short Edit",
+                             "Quick Hit Clean",
+                             "Quick Hit",
+                             "Quick Hit Dirty")
+
+        self.genre_ignore = ("Alternative",
+                             "Country",
+                             "Dancehall",
+                             "Dembow",
+                             "Drum Loops",
+                             "Latin Pop",
+                             "Reggae",
+                             "Reggaeton",
+                             "Rock",
+                             "Scratch Tools",
+                             "Soca")
 
     def download(self, track):
         try:
@@ -39,11 +56,16 @@ class BPMSupreme(RecordPool):
             return tracks
 
         playlist = self.driver.find_element_by_class_name("genreslist")
-        tags = playlist.find_elements_by_class_name("tag")
-        num = number if number and len(tags) >= number else len(tags)
-        for tag in tags[:num]:
+        songs = playlist.find_elements_by_class_name("track_bx")
+        num_max = min(number, len(songs)) if number > 0 else len(songs)
+        for song in songs[:num_max]:
+            genre = song.find_element_by_xpath(".//*[@class='cat ng-binding']")
+            if genre.text in self.genre_ignore:
+                continue
+
+            tag = song.find_element_by_class_name("tag")
             elements = tag.find_elements_by_xpath(".//*[@class='ng-binding ng-scope']")
-            elements = [e for e in elements if e.text not in self.ignore]
+            elements = [e for e in elements if e.text not in self.track_ignore]
             tracks.extend(elements)
 
         return tracks
@@ -53,6 +75,7 @@ class BPMSupreme(RecordPool):
             self.reload_page()
 
         try:
+            time.sleep(0.5)
             element = WebDriverWait(self.driver, 5).until(
                 expected_conditions.element_to_be_clickable((By.XPATH, "//a[@aria-label='Next']"))
             )
