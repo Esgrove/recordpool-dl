@@ -26,7 +26,7 @@ class DJCity(RecordPool):
         tracks = []
         total_pages = len(track_links)
         for page, link in enumerate(track_links, 1):
-            print("{} / {}".format(page, total_pages), end="\r", flush=True)
+            print(f"{page} / {total_pages}", end="\r", flush=True)
             self.driver.get(link)
             if self.driver.find_elements_by_css_selector('.rating-stars'):
                 stars = self.driver.find_element_by_css_selector(".rating-stars")
@@ -53,7 +53,7 @@ class DJCity(RecordPool):
 
     def next_page(self) -> bool:
         self.current_num += 1
-        url = "https://www.djcity.com/uk/digital/records.aspx?p={}".format(self.current_num) + self.filter
+        url = f"https://www.djcity.com/uk/digital/records.aspx?p={self.current_num}{self.filter}"
         if url == self.current_url:
             return False
 
@@ -94,8 +94,8 @@ class DJCity(RecordPool):
         self.filter = "&f=ddfilter"
         for genre in genres:
             genre_id = self.genremap[genre.lower()]
-            self.filter += "&{}=on".format(genre_id)
+            self.filter += f"&{genre_id}=on"
 
-        self.current_url = "https://www.djcity.com/uk/digital/records.aspx?p={}".format(self.current_num)
+        self.current_url = f"https://www.djcity.com/uk/digital/records.aspx?p={self.current_num}"
         self.current_url += self.filter
         self.driver.get(self.current_url)

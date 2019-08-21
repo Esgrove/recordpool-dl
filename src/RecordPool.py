@@ -29,7 +29,7 @@ class RecordPool:
         elif platform.system().lower() == "darwin":
             download_root = os.path.join(user_path, "Dropbox", "DJ MUSIC SORT")
             chrome_profile = os.path.join(user_path, r"Library/Application Support/Google/Chrome")
-            self.chrome_driver = os.path.join(user_path, "Dropbox/CODE/webdriver/chromedriver")
+            self.chrome_driver = "/usr/local/bin/chromedriver"
 
         else:
             printColor(f"Unsupported OS \"{platform.system()}\"", Color.red)
@@ -48,7 +48,7 @@ class RecordPool:
             "safebrowsing.enabled": True})
 
     def download_page(self, number=0):
-        """Download all main files on current page, or optionally only the "number" first tracks"""
+        """ Download all main files on current page, or optionally only the "number" first tracks."""
         printColor("Getting download links...", Color.yellow)
         tracks = self.get_tracks(number)
 
@@ -63,27 +63,25 @@ class RecordPool:
         self.total_tracks += len(tracks)
         printColor("Done!\n", Color.green)
 
-    # >>>>> OVERRIDE IF NEEDED >>>>>
     def download(self, track):
         self.driver.get(track)
 
-    def get_tracks(self, number=0) -> list:
-        return []
-
     def get_page_number(self) -> int:
         digits = [int(s) for s in self.current_url.split("/") if s.isdigit()]
-        if digits:
-            return digits[0]
-        else:
-            return 1
+        page = 1 if not digits else digits[0]
+        return page
+
+    def get_tracks(self, number=0) -> list:
+        # Override in site-spesific child class.
+        raise NotImplementedError
 
     def next_page(self) -> bool:
-        return False
+        # Override in site-spesific child class.
+        raise NotImplementedError
 
     def prepare_pool(self):
-        pass
-
-    # <<<<< OVERRIDE ENDS <<<<<
+        # Override in site-spesific child class.
+        raise NotImplementedError
 
     def print_stats(self):
         print("--------------------")
@@ -104,7 +102,7 @@ class RecordPool:
             self.current_url = self.driver.current_url
 
         except InvalidArgumentException:
-            printColor("Chrome already running. Close Chrome and try again...", Color.red)
+            printColor("\nError: Chrome already running. Close Chrome and try again...", Color.red)
             sys.exit()
 
         print("\nDownloader initialized for:\n" + repr(self))
@@ -116,8 +114,9 @@ class RecordPool:
         self.current_num = self.get_page_number()
 
     def quit(self):
-        self.driver.quit()
-        self.print_stats()
+        if self.driver:
+            self.driver.quit()
+            self.print_stats()
 
     def __str__(self):
         return self.name
