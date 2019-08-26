@@ -12,20 +12,19 @@ from colorprint import Color, printBold, printColor
 from Beatjunkies import Beatjunkies
 from BPMSupreme import BPMSupreme
 from DJCity import DJCity
-
+from Bandcamp import Bandcamp
 
 class RecordPoolDownloader:
     """ Command line tool for recordpool web downloads."""
     def __init__(self, site):
         if site.lower() == "beatjunkies":
             self.pool = Beatjunkies()
-
         elif site.lower() == "bpmsupreme":
             self.pool = BPMSupreme()
-
         elif site.lower() == "djcity":
             self.pool = DJCity()
-
+        elif site.lower() == "bandcamp":
+            self.pool = Bandcamp()
         else:
             raise RuntimeError("Unsupported record pool!")
 
@@ -82,14 +81,14 @@ class RecordPoolDownloader:
             return
 
 
-def main():
+def main(args):
     colorama.init()
     printBold("/////// RECORDPOOL AUTO-DL ///////", Color.green)
 
-    site = None if len(sys.argv) < 2 else sys.argv[1]
+    site = None if not args else args[0]
     while not site:
         printBold("\nChoose record pool:")
-        for index, name in enumerate(("Beatjunkies", "DJCity", "BPM Supreme"), 1):
+        for index, name in enumerate(("Beatjunkies", "DJCity", "BPM Supreme", "Bandcamp"), 1):
             print(f"{index}: {name}")
 
         ans = input()
@@ -99,12 +98,20 @@ def main():
             site = "djcity"
         elif ans.lower() in ("3", "s"):
             site = "bpmsupreme"
+        elif ans.lower() in ("4", "c"):
+            site = "bandcamp"
         else:
             print("Error. Give a correct answer...")
 
     try:
         downloader = RecordPoolDownloader(site)
-        downloader.run_loop()
+        if site == "bandcamp":
+            downloader.pool.download_page()
+            downloader.pool.open_page("chrome://downloads/")
+            input("Wait until downloads have finished...\n")
+        else:
+            downloader.run_loop()
+
     except Exception:
         error_type, error_value, trace = sys.exc_info()
         printBold(f"Error: {error_type}", Color.red)
@@ -116,4 +123,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1:])

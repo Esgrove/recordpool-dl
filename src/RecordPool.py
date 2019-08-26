@@ -64,9 +64,11 @@ class RecordPool:
         printColor("Done!\n", Color.green)
 
     def download(self, track):
+        # Default implementation. Override if needed.
         self.driver.get(track)
 
     def get_page_number(self) -> int:
+        # Default implementation. Override if needed.
         digits = [int(s) for s in self.current_url.split("/") if s.isdigit()]
         page = 1 if not digits else digits[0]
         return page
@@ -79,9 +81,13 @@ class RecordPool:
         # Override in site-spesific child class.
         raise NotImplementedError
 
+    def open_page(self, url):
+        self.driver.get(url)
+        self.update_current_page
+
     def prepare_pool(self):
-        # Override in site-spesific child class.
-        raise NotImplementedError
+        # Override if needed.
+        pass
 
     def print_stats(self):
         print("--------------------")
@@ -122,8 +128,8 @@ class RecordPool:
         return self.name
 
     def __repr__(self):
-        text = getColor("/// " + self.name + " ///\n", Color.cyan)
-        text += "--> " + getColor(self.download_path, Color.yellow)
+        text = getColor(f"/// {self.name} ///\n", Color.cyan)
+        text += f"--> {getColor(self.download_path, Color.yellow)}"
         return text
 
     def __del__(self):

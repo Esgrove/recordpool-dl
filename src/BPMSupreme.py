@@ -3,7 +3,7 @@ import time
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support import expected_conditions as EC
 
 from selenium.common.exceptions import ElementClickInterceptedException
 from selenium.common.exceptions import ElementNotInteractableException
@@ -50,9 +50,7 @@ class BPMSupreme(RecordPool):
         tracks = []
         try:
             # wait for songs to load
-            WebDriverWait(self.driver, 5).until(
-                expected_conditions.visibility_of_element_located((By.CLASS_NAME, "tag"))
-            )
+            WebDriverWait(self.driver, 5).until(EC.visibility_of_element_located((By.CLASS_NAME, "tag")))
         except TimeoutException:
             return tracks
 
@@ -76,9 +74,7 @@ class BPMSupreme(RecordPool):
             self.reload_page()
 
         try:
-            element = WebDriverWait(self.driver, 5).until(
-                expected_conditions.element_to_be_clickable((By.XPATH, "//a[@aria-label='Next']"))
-            )
+            element = WebDriverWait(self.driver, 5).until(EC.element_to_be_clickable((By.XPATH, "//a[@aria-label='Next']")))
             self.driver.execute_script("arguments[0].click()", element)
 
         except (ElementNotInteractableException, ElementClickInterceptedException, TimeoutException):
