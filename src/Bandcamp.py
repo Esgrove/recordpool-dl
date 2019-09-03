@@ -19,11 +19,13 @@ class Bandcamp(RecordPool):
         tracks = []
         songs = self.driver.find_elements_by_class_name("download-title")
         for song in songs:
-            button = WebDriverWait(song, 20).until(EC.element_to_be_clickable((By.CLASS_NAME, "item-button")))
+            button = WebDriverWait(song, 30).until(EC.element_to_be_clickable((By.CLASS_NAME, "item-button")))
             url = button.get_attribute("href")
             tracks.append(url)
 
         return tracks
 
     def prepare_pool(self):
-        self.driver.find_element_by_class_name("bfd-download-dropdown").click()
+        elements = self.driver.find_elements_by_class_name("bfd-download-dropdown")
+        if elements:
+            elements[0].click()

@@ -10,7 +10,7 @@ from colorprint import printColor, getColor, Color
 
 
 class RecordPool:
-    """ Parent class for all recordpool-specific implementations."""
+    """ Parent class for all recordpool implementations."""
     def __init__(self, name, folder):
         self.name = name
         self.folder = folder
@@ -83,7 +83,7 @@ class RecordPool:
 
     def open_page(self, url):
         self.driver.get(url)
-        self.update_current_page
+        self.update_current_page()
 
     def prepare_pool(self):
         # Override if needed.

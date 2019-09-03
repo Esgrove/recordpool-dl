@@ -14,6 +14,7 @@ from BPMSupreme import BPMSupreme
 from DJCity import DJCity
 from Bandcamp import Bandcamp
 
+
 class RecordPoolDownloader:
     """ Command line tool for recordpool web downloads."""
     def __init__(self, site):
