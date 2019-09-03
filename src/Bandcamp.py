@@ -6,6 +6,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+
 class Bandcamp(RecordPool):
     def __init__(self):
         super().__init__("Bandcamp", "#SORT")
@@ -25,7 +26,12 @@ class Bandcamp(RecordPool):
 
         return tracks
 
+    def next_page(self) -> bool:
+        # not needed
+        return False
+
     def prepare_pool(self):
+        # expand downloads
         elements = self.driver.find_elements_by_class_name("bfd-download-dropdown")
         if elements:
             elements[0].click()
