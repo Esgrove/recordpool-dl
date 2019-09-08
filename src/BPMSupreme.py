@@ -26,6 +26,7 @@ class BPMSupreme(RecordPool):
                              "Quick Hit Dirty")
 
         self.genre_ignore = ("Alternative",
+                             "Bachata",
                              "Country",
                              "Dancehall",
                              "Dembow",
