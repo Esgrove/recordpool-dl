@@ -90,7 +90,7 @@ class DJCity(RecordPool):
         else:
             genres = ("hiphop", "house", "r&b", "pop", "other")
 
-        print("Genres: {}".format(get_color(", ".join(genres), Color.yellow)))
+        print(f"Genres: {get_color(', '.join(genres), Color.yellow)}")
         self.filter = "&f=ddfilter"
         for genre in genres:
             genre_id = self.genre_map[genre.lower()]
