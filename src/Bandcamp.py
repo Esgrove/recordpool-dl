@@ -31,7 +31,7 @@ class Bandcamp(RecordPool):
         return False
 
     def prepare_pool(self):
-        # expand downloads
+        # expand downloads if needed
         elements = self.driver.find_elements_by_class_name("bfd-download-dropdown")
         if elements:
             elements[0].click()
