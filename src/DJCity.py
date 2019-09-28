@@ -1,6 +1,6 @@
 import random
 
-from colorprint import printColor, printBold, getColor, Color
+from colorprint import print_color, print_bold, get_color, Color
 from RecordPool import RecordPool
 
 
@@ -77,11 +77,11 @@ class DJCity(RecordPool):
                 self.driver.get(self.url)
 
     def set_genre_filter(self):
-        printBold("Use default genres (y/n)?")
+        print_bold("Use default genres (y/n)?")
         ans = input()
         if ans.lower() in ("n", "no", "0"):
-            printBold("Choose genres:")
-            printColor("hiphop, house, r&b, latin, pop, reggae, other", Color.cyan)
+            print_bold("Choose genres:")
+            print_color("hiphop, house, r&b, latin, pop, reggae, other", Color.cyan)
             genres = [i.strip().lower() for i in input().split(",") if i.strip().lower() in self.genres]
             if not genres:
                 print("No genres specified, using all...")
@@ -90,7 +90,7 @@ class DJCity(RecordPool):
         else:
             genres = ("hiphop", "house", "r&b", "pop", "other")
 
-        print("Genres: {}".format(getColor(", ".join(genres), Color.yellow)))
+        print("Genres: {}".format(get_color(", ".join(genres), Color.yellow)))
         self.filter = "&f=ddfilter"
         for genre in genres:
             genre_id = self.genre_map[genre.lower()]

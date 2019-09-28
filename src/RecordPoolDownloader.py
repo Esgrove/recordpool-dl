@@ -6,9 +6,8 @@ Akseli Lukkarila
 import sys
 import traceback
 
-import colorama
+from colorprint import Color, print_bold, print_color
 
-from colorprint import Color, printBold, printColor
 from Beatjunkies import Beatjunkies
 from BPMSupreme import BPMSupreme
 from DJCity import DJCity
@@ -32,7 +31,7 @@ class RecordPoolDownloader:
         self.pool.start_driver()
 
     def run_loop(self):
-        printBold("\nChoose mode:")
+        print_bold("\nChoose mode:")
         print(" 0: Single page")
         print(">0: Multipage with given number of pages")
         try:
@@ -49,7 +48,7 @@ class RecordPoolDownloader:
     def single_page_loop(self):
         self.pool.update_current_page()
         while True:
-            printBold(f"--- Page: {self.pool.current_num} ---")
+            print_bold(f"--- Page: {self.pool.current_num} ---")
             try:
                 number = int(input("Give number of tracks to download from current page, 0 = all\n"))
                 number = max(0, number)
@@ -61,19 +60,19 @@ class RecordPoolDownloader:
                 break
 
             if not self.pool.next_page():
-                printColor("No more pages!", Color.red)
+                print_color("No more pages!", Color.red)
                 break
 
     def multi_page_loop(self, pages=1):
         self.pool.update_current_page()
         last_page = self.pool.current_num + pages - 1
         for _ in range(1, pages + 1):
-            printBold(f"--- Page: {self.pool.current_num} / {last_page} ---")
+            print_bold(f"--- Page: {self.pool.current_num} / {last_page} ---")
             self.pool.download_page()
             if not self.pool.next_page():
                 return
 
-        printBold("Continue for pages?")
+        print_bold("Continue for pages?")
         try:
             num = int(input())
             self.multi_page_loop(num)
@@ -83,12 +82,11 @@ class RecordPoolDownloader:
 
 
 def main(args):
-    colorama.init()
-    printBold("/////// RECORDPOOL AUTO-DL ///////", Color.green)
+    print_bold("/////// RECORDPOOL AUTO-DL ///////", Color.green)
 
     site = None if not args else args[0]
     while not site:
-        printBold("\nChoose record pool:")
+        print_bold("\nChoose record pool:")
         for index, name in enumerate(("Beatjunkies", "DJCity", "BPM Supreme", "Bandcamp"), 1):
             print(f"{index}: {name}")
 
@@ -115,10 +113,10 @@ def main(args):
 
     except Exception:
         error_type, error_value, trace = sys.exc_info()
-        printBold(f"Error: {error_type}", Color.red)
-        printColor(str(error_value), Color.red)
+        print_bold(f"Error: {error_type}", Color.red)
+        print_color(str(error_value), Color.red)
         for line in traceback.format_tb(trace):
-            printColor(line, Color.yellow)
+            print_color(line, Color.yellow)
 
         return 1
 

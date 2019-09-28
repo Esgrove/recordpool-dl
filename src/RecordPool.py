@@ -6,7 +6,7 @@ from tqdm import tqdm
 from selenium import webdriver
 from selenium.common.exceptions import InvalidArgumentException
 
-from colorprint import printColor, getColor, Color
+from colorprint import Color, get_color, print_color
 
 
 class RecordPool:
@@ -32,7 +32,7 @@ class RecordPool:
             self.chrome_driver = "/usr/local/bin/chromedriver"
 
         else:
-            printColor(f"Unsupported OS \"{platform.system()}\"", Color.red)
+            print_color(f"Unsupported OS \"{platform.system()}\"", Color.red)
             sys.exit()
 
         self.download_path = os.path.join(download_root, self.folder)
@@ -49,19 +49,18 @@ class RecordPool:
 
     def download_page(self, number=0):
         """ Download all main files on current page, or optionally only the "number" first tracks."""
-        printColor("Getting download links...", Color.yellow)
+        print_color("Getting download links...", Color.yellow)
         tracks = self.get_tracks(number)
 
         if not tracks:
-            printColor("No files to download!\n", Color.red)
+            print_color("No files to download!\n", Color.red)
             return
 
-        printColor("downloading files...", Color.yellow)
+        print_color("downloading files...", Color.yellow)
         for track in tqdm(tracks):
             self.download(track)
 
         self.total_tracks += len(tracks)
-        printColor("Done!\n", Color.green)
 
     def download(self, track):
         # Default implementation. Override if needed.
@@ -91,7 +90,7 @@ class RecordPool:
 
     def print_stats(self):
         print("--------------------")
-        printColor(self.name, Color.cyan)
+        print_color(self.name, Color.cyan)
         print(f"Total files downloaded: {self.total_tracks}\n")
 
     def reload_page(self):
@@ -108,7 +107,7 @@ class RecordPool:
             self.current_url = self.driver.current_url
 
         except InvalidArgumentException:
-            printColor("\nError: Chrome already running. Close Chrome and try again...", Color.red)
+            print_color("\nError: Chrome already running. Close Chrome and try again...", Color.red)
             sys.exit()
 
         print("\nDownloader initialized for:\n" + repr(self))
@@ -128,8 +127,8 @@ class RecordPool:
         return self.name
 
     def __repr__(self):
-        text = getColor(f"/// {self.name} ///\n", Color.cyan)
-        text += f"--> {getColor(self.download_path, Color.yellow)}"
+        text = get_color(f"/// {self.name} ///\n", Color.cyan)
+        text += f"--> {get_color(self.download_path, Color.yellow)}"
         return text
 
     def __del__(self):
