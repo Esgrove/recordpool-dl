@@ -1,8 +1,10 @@
+import logging
 import os
 import sys
 import platform
 
 from tqdm import tqdm
+
 from selenium import webdriver
 from selenium.common.exceptions import InvalidArgumentException
 
@@ -24,7 +26,7 @@ class RecordPool:
         if platform.system().lower() == "windows":
             download_root = os.path.join("D:\\", "Dropbox", "DJ MUSIC SORT")
             chrome_profile = os.path.join(user_path, "AppData\\Local\\Google\\Chrome\\User Data")
-            self.chrome_driver = "C:\\ProgramData\\chocolatey\\bin\\chromedriver.exe"
+            self.chrome_driver = "D:\\Dropbox\\CODE\\webdriver\\chromedriver.exe"
 
         elif platform.system().lower() == "darwin":
             download_root = os.path.join(user_path, "Dropbox", "DJ MUSIC SORT")
@@ -47,20 +49,22 @@ class RecordPool:
             "download.directory_upgrade": True,
             "safebrowsing.enabled": True})
 
-    def download_page(self, number=0):
+    def download_page(self, number=0) -> int:
         """ Download all main files on current page, or optionally only the "number" first tracks."""
         print_color("Getting download links...", Color.yellow)
         tracks = self.get_tracks(number)
 
         if not tracks:
             print_color("No files to download!\n", Color.red)
-            return
+            return 0
 
         print_color("downloading files...", Color.yellow)
         for track in tqdm(tracks):
             self.download(track)
 
-        self.total_tracks += len(tracks)
+        num_tracks = len(tracks)
+        self.total_tracks += num_tracks
+        return num_tracks
 
     def download(self, track):
         # Default implementation. Override if needed.
@@ -91,7 +95,9 @@ class RecordPool:
     def print_stats(self):
         print("--------------------")
         print_color(self.name, Color.cyan)
-        print(f"Total files downloaded: {self.total_tracks}\n")
+        msg = f"Total files downloaded: {self.total_tracks}"
+        print(msg, end="\n\n")
+        logging.info(msg)
 
     def reload_page(self):
         self.driver.get(self.current_url)
@@ -110,7 +116,7 @@ class RecordPool:
             print_color("\nError: Chrome already running. Close Chrome and try again...", Color.red)
             sys.exit()
 
-        print("\nDownloader initialized for:\n" + repr(self))
+        print(f"\nDownloader initialized for:\n{repr(self)}")
 
         self.prepare_pool()
 
