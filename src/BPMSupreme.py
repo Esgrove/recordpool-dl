@@ -27,11 +27,18 @@ class BPMSupreme(RecordPool):
 
         self.genre_ignore = ("Alternative",
                              "Bachata",
+                             "Banda",
                              "Country",
+                             "Corrido",
+                             "Cumbia",
+                             "Cumbias",
                              "Dancehall",
                              "Dembow",
                              "Drum Loops",
                              "Latin Pop",
+                             "Mambo",
+                             "Mariachi",
+                             "Norteno",
                              "Reggae",
                              "Reggaeton",
                              "Rock",
@@ -39,20 +46,24 @@ class BPMSupreme(RecordPool):
                              "Scratch Tools",
                              "Soca")
 
+    def click(self, element):
+        self.driver.execute_script("arguments[0].click()", element)
+
     def download(self, track):
         try:
-            self.driver.execute_script("arguments[0].click()", track)
+            self.click(track)
+            # give download a bit of time to start before returning
+            time.sleep(0.6)
         except StaleElementReferenceException:
             return
-
-        time.sleep(0.5)
 
     def get_tracks(self, number=0) -> list:
         tracks = []
         try:
             # wait for songs to load
-            WebDriverWait(self.driver, 5).until(EC.visibility_of_element_located((By.CLASS_NAME, "tag")))
+            WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.CLASS_NAME, "tag")))
         except TimeoutException:
+            print("No tracks found...")
             return tracks
 
         playlist = self.driver.find_element_by_class_name("genreslist")
@@ -65,18 +76,20 @@ class BPMSupreme(RecordPool):
 
             tag = song.find_element_by_class_name("tag")
             elements = tag.find_elements_by_xpath(".//*[@class='ng-binding ng-scope']")
-            elements = [e for e in elements if e.text not in self.track_ignore]
-            tracks.extend(elements)
+            filtered = [e for e in elements if e.text not in self.track_ignore]
+            if filtered:
+                tracks.extend(filtered)
 
         return tracks
 
     def next_page(self) -> bool:
+        self.close_error_popup()
         if self.driver.current_url != self.current_url:
             self.reload_page()
 
         try:
             element = WebDriverWait(self.driver, 5).until(EC.element_to_be_clickable((By.XPATH, "//a[@aria-label='Next']")))
-            self.driver.execute_script("arguments[0].click()", element)
+            self.click(element)
 
         except (ElementNotInteractableException, ElementClickInterceptedException, TimeoutException):
             self.current_num += 1
@@ -90,3 +103,9 @@ class BPMSupreme(RecordPool):
 
     def prepare_pool(self):
         input("Choose genres manually and press a key to continue...")
+
+    def close_error_popup(self):
+        elements = self.driver.find_elements_by_xpath(".//*[@class='sweet-alert showSweetAlert visible']")
+        if elements:
+            button = elements[0].find_element_by_class_name("confirm")
+            self.click(button)

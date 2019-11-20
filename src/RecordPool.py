@@ -1,6 +1,8 @@
 import logging
 import os
+import time
 import sys
+import shutil
 import platform
 
 from tqdm import tqdm
@@ -13,9 +15,10 @@ from colorprint import Color, get_color, print_color
 
 class RecordPool:
     """ Parent class for all recordpool implementations."""
-    def __init__(self, name, folder):
+    def __init__(self, name, folder_name):
         self.name = name
-        self.folder = folder
+        self.folder = folder_name
+        self.system = platform.system().lower()
         self.current_url = None
         self.current_num = None
         self.driver = None
@@ -23,21 +26,23 @@ class RecordPool:
         self.url = ""
 
         user_path = os.path.expanduser("~")
-        if platform.system().lower() == "windows":
-            download_root = os.path.join("D:\\", "Dropbox", "DJ MUSIC SORT")
+        if self.windows():
+            download_root = os.path.join(user_path, "Downloads") # os.path.join("D:\\", "Dropbox", "DJ MUSIC SORT")
             chrome_profile = os.path.join(user_path, "AppData\\Local\\Google\\Chrome\\User Data")
             self.chrome_driver = "D:\\Dropbox\\CODE\\webdriver\\chromedriver.exe"
 
-        elif platform.system().lower() == "darwin":
+        elif self.mac_os():
             download_root = os.path.join(user_path, "Dropbox", "DJ MUSIC SORT")
             chrome_profile = os.path.join(user_path, r"Library/Application Support/Google/Chrome")
             self.chrome_driver = "/usr/local/bin/chromedriver"
 
         else:
-            print_color(f"Unsupported OS \"{platform.system()}\"", Color.red)
+            print_color(f"Unsupported OS: '{platform.system()}'", Color.red)
             sys.exit()
 
         self.download_path = os.path.join(download_root, self.folder)
+        if not os.path.exists(self.download_path):
+            os.makedirs(self.download_path)
 
         self.chrome_options = webdriver.ChromeOptions()
         self.chrome_options.add_argument("user-data-dir=" + chrome_profile)
@@ -49,11 +54,23 @@ class RecordPool:
             "download.directory_upgrade": True,
             "safebrowsing.enabled": True})
 
+        logging.basicConfig(filename=f"{self.name}.log", filemode='w', level=logging.INFO,
+                            format='%(asctime)s [%(levelname)s] %(message)s', datefmt="%Y.%m.%d %H:%M:%S")
+
+    def check_free_disk_space(self, limit_in_mb=1024) -> bool:
+        """Check that there is more free disk space left than the given limit. Default is 1024 megabytes."""
+        total, _, free = shutil.disk_usage(self.download_path)
+        free_mb = free / 1048576  # 1024^2
+        logging.debug(f"free disk space: {free_mb} MB ({free / total:.1%})")
+        return free_mb > limit_in_mb
+
     def download_page(self, number=0) -> int:
         """ Download all main files on current page, or optionally only the "number" first tracks."""
+        if not self.check_free_disk_space():
+            raise OSError("Disk is full!")
+
         print_color("Getting download links...", Color.yellow)
         tracks = self.get_tracks(number)
-
         if not tracks:
             print_color("No files to download!\n", Color.red)
             return 0
@@ -61,6 +78,9 @@ class RecordPool:
         print_color("downloading files...", Color.yellow)
         for track in tqdm(tracks):
             self.download(track)
+
+        # wait a bit for downloads
+        time.sleep(2)
 
         num_tracks = len(tracks)
         self.total_tracks += num_tracks
@@ -128,6 +148,18 @@ class RecordPool:
         if self.driver:
             self.driver.quit()
             self.print_stats()
+
+    def mac_os(self) -> bool:
+        return self.system == "darwin"
+
+    def windows(self) -> bool:
+        return self.system == "windows"
+
+    def system_name(self) -> str:
+        if self.mac_os():
+            return f"MacOS {platform.mac_ver()[0]}"
+        else:
+            return f"Windows {platform.win32_ver()[0]} {platform.win32_ver()[1].split('.')[-1]}"
 
     def __str__(self):
         return self.name
