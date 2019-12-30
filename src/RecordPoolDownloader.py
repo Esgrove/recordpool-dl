@@ -11,10 +11,10 @@ import traceback
 
 from colorprint import Color, print_bold, print_color
 
+from Bandcamp import Bandcamp
 from Beatjunkies import Beatjunkies
 from BPMSupreme import BPMSupreme
 from DJCity import DJCity
-from Bandcamp import Bandcamp
 
 
 class RecordPoolDownloader:
