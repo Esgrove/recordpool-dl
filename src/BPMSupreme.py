@@ -109,3 +109,4 @@ class BPMSupreme(RecordPool):
         if elements:
             button = elements[0].find_element_by_class_name("confirm")
             self.click(button)
+            time.sleep(0.5)
