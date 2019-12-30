@@ -18,7 +18,7 @@ from DJCity import DJCity
 
 
 class RecordPoolDownloader:
-    """ Command line tool for recordpool web downloads."""
+    """Command line tool for recordpool web downloads."""
     def __init__(self, site: str):
         if site == "beatjunkies":
             self.pool = Beatjunkies()

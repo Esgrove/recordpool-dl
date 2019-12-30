@@ -1,9 +1,9 @@
 import logging
 import os
+import platform
 import time
 import sys
 import shutil
-import platform
 
 from tqdm import tqdm
 
@@ -14,7 +14,7 @@ from colorprint import Color, get_color, print_color
 
 
 class RecordPool:
-    """ Parent class for all recordpool implementations."""
+    """Parent class for all recordpool implementations."""
     def __init__(self, name, folder_name):
         self.name = name
         self.folder = folder_name
@@ -27,7 +27,7 @@ class RecordPool:
 
         user_path = os.path.expanduser("~")
         if self.windows():
-            download_root = os.path.join(user_path, "Downloads") # os.path.join("D:\\", "Dropbox", "DJ MUSIC SORT")
+            download_root = os.path.join("D:\\", "Dropbox", "DJ MUSIC SORT")
             chrome_profile = os.path.join(user_path, "AppData\\Local\\Google\\Chrome\\User Data")
             self.chrome_driver = "D:\\Dropbox\\CODE\\webdriver\\chromedriver.exe"
 
@@ -44,6 +44,8 @@ class RecordPool:
         if not os.path.exists(self.download_path):
             os.makedirs(self.download_path)
 
+        self.free_space_at_start, _ = self.free_disk_space()
+
         self.chrome_options = webdriver.ChromeOptions()
         self.chrome_options.add_argument("user-data-dir=" + chrome_profile)
         self.chrome_options.add_argument("profile-directory=Default")
@@ -59,13 +61,12 @@ class RecordPool:
 
     def check_free_disk_space(self, limit_in_mb=1024) -> bool:
         """Check that there is more free disk space left than the given limit. Default is 1024 megabytes."""
-        total, _, free = shutil.disk_usage(self.download_path)
-        free_mb = free / 1048576  # 1024^2
-        logging.debug(f"free disk space: {free_mb} MB ({free / total:.1%})")
-        return free_mb > limit_in_mb
+        free, ratio = self.free_disk_space()
+        logging.debug(f"free disk space: {free:.1f} MB ({ratio:.1%})")
+        return free > limit_in_mb
 
     def download_page(self, number=0) -> int:
-        """ Download all main files on current page, or optionally only the "number" first tracks."""
+        """Download all main files on current page, or optionally only the "number" first tracks."""
         if not self.check_free_disk_space():
             raise OSError("Disk is full!")
 
@@ -79,7 +80,7 @@ class RecordPool:
         for track in tqdm(tracks):
             self.download(track)
 
-        # wait a bit for downloads
+        # wait a bit for downloads to finish
         time.sleep(2)
 
         num_tracks = len(tracks)
@@ -87,45 +88,62 @@ class RecordPool:
         return num_tracks
 
     def download(self, track):
+        """Download one track."""
         # Default implementation. Override if needed.
         self.driver.get(track)
 
+    def free_disk_space(self):
+        """Returns free disk space in download path as a tuple of megabytes and ratio of free space left."""
+        total, _, free = shutil.disk_usage(self.download_path)
+        free_mb = free / (1024 * 1024)
+        free_ratio = free / total
+        return free_mb, free_ratio
+
     def get_page_number(self) -> int:
+        """Get the current page number."""
         # Default implementation. Override if needed.
         digits = [int(s) for s in self.current_url.split("/") if s.isdigit()]
         page = 1 if not digits else digits[0]
         return page
 
     def get_tracks(self, number=0) -> list:
-        # Override in site-spesific child class.
+        """Return a list of track objects that can be downloaded."""
+        # Override in site-specific child class.
         raise NotImplementedError
 
     def next_page(self) -> bool:
-        # Override in site-spesific child class.
+        """Load next page, or return false if there are no more pages available."""
+        # Override in site-specific child class.
         raise NotImplementedError
 
     def open_page(self, url):
+        """Open given url."""
         self.driver.get(url)
         self.update_current_page()
 
     def prepare_pool(self):
-        # Override if needed.
+        """Additional pool setup if needed, such as selecting genres."""
         pass
 
     def print_stats(self):
         print("--------------------")
         print_color(self.name, Color.cyan)
-        msg = f"Total files downloaded: {self.total_tracks}"
-        print(msg, end="\n\n")
+        free_space, _ = self.free_disk_space()
+        total_size = free_space - self.free_space_at_start
+        msg = f"Total files downloaded: {self.total_tracks} / {total_size:.1f} MB"
         logging.info(msg)
+        print(msg, end="\n\n")
 
     def reload_page(self):
+        """Reload currently stored page url."""
         self.driver.get(self.current_url)
 
     def set_start_page(self, page_number):
+        """Set current page number to given number."""
         self.current_num = page_number
 
     def start_driver(self):
+        """Open chromedriver and prepare pool for downloading."""
         try:
             self.driver = webdriver.Chrome(executable_path=self.chrome_driver, options=self.chrome_options)
             self.driver.implicitly_wait(0.5)
@@ -141,10 +159,12 @@ class RecordPool:
         self.prepare_pool()
 
     def update_current_page(self):
+        """Update page variables (url and page number) to match currently loaded page."""
         self.current_url = self.driver.current_url
         self.current_num = self.get_page_number()
 
     def quit(self):
+        """Close driver and print download stats."""
         if self.driver:
             self.driver.quit()
             self.print_stats()
@@ -156,6 +176,7 @@ class RecordPool:
         return self.system == "windows"
 
     def system_name(self) -> str:
+        """Returns a formatted string for the platform name."""
         if self.mac_os():
             return f"MacOS {platform.mac_ver()[0]}"
         else:
@@ -165,8 +186,9 @@ class RecordPool:
         return self.name
 
     def __repr__(self):
+        free, ratio = self.free_disk_space()
         text = get_color(f"/// {self.name} ///\n", Color.cyan)
-        text += f"--> {get_color(self.download_path, Color.yellow)}"
+        text += f"path: {get_color(self.download_path, Color.yellow)}\ndisk: {free/1024:.1f} GB ({ratio:.1%})"
         return text
 
     def __del__(self):
