@@ -129,7 +129,7 @@ class RecordPool:
         print("--------------------")
         print_color(self.name, Color.cyan)
         free_space, _ = self.free_disk_space()
-        total_size = free_space - self.free_space_at_start
+        total_size = self.free_space_at_start - free_space
         msg = f"Total files downloaded: {self.total_tracks} / {total_size:.1f} MB"
         logging.info(msg)
         print(msg, end="\n\n")
@@ -188,7 +188,7 @@ class RecordPool:
     def __repr__(self):
         free, ratio = self.free_disk_space()
         text = get_color(f"/// {self.name} ///\n", Color.cyan)
-        text += f"path: {get_color(self.download_path, Color.yellow)}\ndisk: {free/1024:.1f} GB ({ratio:.1%})"
+        text += f"path: {get_color(self.download_path, Color.yellow)}\ndisk: {free/1024:.1f} GB ({ratio:.1%}) free"
         return text
 
     def __del__(self):
