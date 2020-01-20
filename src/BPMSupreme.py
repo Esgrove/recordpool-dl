@@ -16,7 +16,7 @@ from RecordPool import RecordPool
 class BPMSupreme(RecordPool):
     def __init__(self):
         super().__init__("BPMSupreme", "BPMSUPREME")
-        self.url = "https://www.bpmsupreme.com/store/newreleases/audio/classic/1"
+        self.url = "https://app.bpmsupreme.com/new-releases/classic/audio"
 
         self.track_ignore = ("Short Edit",
                              "Clean Short Edit",
@@ -49,6 +49,13 @@ class BPMSupreme(RecordPool):
     def click(self, element):
         self.driver.execute_script("arguments[0].click()", element)
 
+    def close_error_popup(self):
+        elements = self.driver.find_elements_by_xpath(".//*[@class='sweet-alert showSweetAlert visible']")
+        if elements:
+            button = elements[0].find_element_by_class_name("confirm")
+            self.click(button)
+            time.sleep(0.5)
+
     def download(self, track):
         try:
             self.click(track)
@@ -57,25 +64,31 @@ class BPMSupreme(RecordPool):
         except StaleElementReferenceException:
             return
 
+    def get_page_number(self) -> int:
+        container = self.driver.find_element_by_class_name("pagination")
+        page = container.find_element_by_class_name("selected")
+        number = int(page.text)
+        return number
+
     def get_tracks(self, number=0) -> list:
         tracks = []
         try:
             # wait for songs to load
-            WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.CLASS_NAME, "tag")))
+            WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.CLASS_NAME, "table-media")))
         except TimeoutException:
             print("No tracks found...")
             return tracks
 
-        playlist = self.driver.find_element_by_class_name("genreslist")
-        songs = playlist.find_elements_by_class_name("track_bx")
+        playlist = self.driver.find_element_by_class_name("table-media")
+        songs = playlist.find_elements_by_class_name("row-container")
         num_max = min(number, len(songs)) if number > 0 else len(songs)
         for song in songs[:num_max]:
-            genre = song.find_element_by_xpath(".//*[@class='cat ng-binding']")
+            genre = song.find_element_by_xpath(".//*[@class='col-category link']")
             if genre.text in self.genre_ignore:
                 continue
 
-            tag = song.find_element_by_class_name("tag")
-            elements = tag.find_elements_by_xpath(".//*[@class='ng-binding ng-scope']")
+            tag = song.find_element_by_class_name("row-tags")
+            elements = tag.find_elements_by_xpath(".//*[@class='tag-view ']")
             filtered = [e for e in elements if e.text not in self.track_ignore]
             if filtered:
                 tracks.extend(filtered)
@@ -88,15 +101,17 @@ class BPMSupreme(RecordPool):
             self.reload_page()
 
         try:
-            element = WebDriverWait(self.driver, 5).until(EC.element_to_be_clickable((By.XPATH, "//a[@aria-label='Next']")))
+            container = self.driver.find_element_by_class_name("pagination")
+            element = container.find_element_by_xpath("//*[contains(text(), '›')]")
             self.click(element)
 
         except (ElementNotInteractableException, ElementClickInterceptedException, TimeoutException):
             self.current_num += 1
-            parts = re.split("(\\d+)", self.driver.current_url)
-            parts[1] = str(self.current_num)
-            next_page = "".join(parts)
-            self.driver.get(next_page)
+            page = container.find_element_by_class_name("selected")
+            number = int(page.text)
+            next_number = number + 1
+            element = container.find_element_by_xpath(f"//*[contains(text(), '{next_number}')]")
+            self.click(element)
 
         self.update_current_page()
         return True
@@ -104,9 +119,4 @@ class BPMSupreme(RecordPool):
     def prepare_pool(self):
         input("Choose genres manually and press a key to continue...")
 
-    def close_error_popup(self):
-        elements = self.driver.find_elements_by_xpath(".//*[@class='sweet-alert showSweetAlert visible']")
-        if elements:
-            button = elements[0].find_element_by_class_name("confirm")
-            self.click(button)
-            time.sleep(0.5)
+
