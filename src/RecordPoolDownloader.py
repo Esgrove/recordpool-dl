@@ -110,7 +110,7 @@ def main(args):
     site = None if not args else args[0].lower()
     while not site:
         print_bold("\nChoose record pool:")
-        options = dict(zip(("1", "2", "3", "4"), ("Beatjunkies", "DJCity", "BPMSupreme", "Bandcamp")))
+        options = dict(zip(("1", "2", "3", "4"), ("Bandcamp", "Beatjunkies", "BPMSupreme", "DJCity")))
         for key, value in options.items():
             print(f"{key}: {value}")
 
@@ -125,7 +125,7 @@ def main(args):
         if site == "bandcamp":
             downloader.pool.download_page()
             downloader.pool.open_page("chrome://downloads/")
-            input("Wait until downloads have finished...\n")
+            input("Wait until downloads have finished and press a button...\n")
         else:
             downloader.run_loop()
 
