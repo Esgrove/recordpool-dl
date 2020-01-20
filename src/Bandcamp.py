@@ -1,5 +1,6 @@
 import time
 
+from colorprint import Color, print_color
 from RecordPool import RecordPool
 
 from selenium.webdriver.common.by import By
@@ -18,11 +19,19 @@ class Bandcamp(RecordPool):
 
     def get_tracks(self, number=0) -> list:
         tracks = []
-        songs = self.driver.find_elements_by_class_name("download-title")
-        for song in songs:
-            button = WebDriverWait(song, 30).until(EC.element_to_be_clickable((By.CLASS_NAME, "item-button")))
+        downloads = self.driver.find_elements_by_class_name("downloads")
+        if not downloads:
+            raise RuntimeError("No downloads found")
+
+        # TODO: async get download links
+        songs = downloads[0].find_elements_by_class_name("download-title")
+        for number, song in enumerate(songs, 1):
+            print(f"  {number}:", end=" ")
+            # wait for Bandcamp to prepare download
+            button = WebDriverWait(song, 300).until(EC.element_to_be_clickable((By.CLASS_NAME, "item-button")))
             url = button.get_attribute("href")
             tracks.append(url)
+            print_color("X", Color.green)
 
         return tracks
 
