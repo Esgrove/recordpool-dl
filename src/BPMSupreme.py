@@ -1,4 +1,3 @@
-import re
 import time
 
 from selenium.webdriver.common.by import By
@@ -17,7 +16,7 @@ class BPMSupreme(RecordPool):
     def __init__(self):
         super().__init__("BPMSupreme", "BPMSUPREME")
         self.url = "https://app.bpmsupreme.com/new-releases/classic/audio"
-
+        self.wait_time = 10
         self.track_ignore = ("Short Edit",
                              "Clean Short Edit",
                              "Dirty Short Edit",
@@ -65,6 +64,7 @@ class BPMSupreme(RecordPool):
             return
 
     def get_page_number(self) -> int:
+        WebDriverWait(self.driver, self.wait_time).until(EC.visibility_of_element_located((By.CLASS_NAME, "pagination")))
         container = self.driver.find_element_by_class_name("pagination")
         page = container.find_element_by_class_name("selected")
         number = int(page.text)
@@ -74,9 +74,9 @@ class BPMSupreme(RecordPool):
         tracks = []
         try:
             # wait for songs to load
-            WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.CLASS_NAME, "table-media")))
+            WebDriverWait(self.driver, self.wait_time).until(EC.visibility_of_element_located((By.CLASS_NAME, "table-media")))
         except TimeoutException:
-            print("No tracks found...")
+            print(f"No tracks found after waiting for {self.wait_time} seconds...")
             return tracks
 
         playlist = self.driver.find_element_by_class_name("table-media")
@@ -100,18 +100,13 @@ class BPMSupreme(RecordPool):
         if self.driver.current_url != self.current_url:
             self.reload_page()
 
+        container = self.driver.find_element_by_class_name("pagination")
         try:
-            container = self.driver.find_element_by_class_name("pagination")
             element = container.find_element_by_xpath("//*[contains(text(), '›')]")
             self.click(element)
 
         except (ElementNotInteractableException, ElementClickInterceptedException, TimeoutException):
-            self.current_num += 1
-            page = container.find_element_by_class_name("selected")
-            number = int(page.text)
-            next_number = number + 1
-            element = container.find_element_by_xpath(f"//*[contains(text(), '{next_number}')]")
-            self.click(element)
+            return False
 
         self.update_current_page()
         return True
