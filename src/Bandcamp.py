@@ -10,7 +10,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 class Bandcamp(RecordPool):
     def __init__(self):
-        super().__init__("Bandcamp", "#SORT")
+        super().__init__("Bandcamp", "BANDCAMP")
         self.url = input("\nGive download URL:\n")
 
     def download(self, track):
@@ -28,7 +28,7 @@ class Bandcamp(RecordPool):
         for number, song in enumerate(songs, 1):
             print(f"  {number}:", end=" ")
             # wait for Bandcamp to prepare download
-            button = WebDriverWait(song, 300).until(EC.element_to_be_clickable((By.CLASS_NAME, "item-button")))
+            button = WebDriverWait(song, 600).until(EC.element_to_be_clickable((By.CLASS_NAME, "item-button")))
             url = button.get_attribute("href")
             tracks.append(url)
             print_color("X", Color.green)
