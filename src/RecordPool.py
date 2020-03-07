@@ -1,14 +1,13 @@
 import logging
 import os
 import platform
-import time
 import sys
 import shutil
-
-from tqdm import tqdm
+import time
 
 from selenium import webdriver
 from selenium.common.exceptions import InvalidArgumentException
+from tqdm import tqdm
 
 from colorprint import Color, get_color, print_color
 
@@ -24,6 +23,9 @@ class RecordPool:
         self.driver = None
         self.total_tracks = 0
         self.url = ""
+
+        logging.basicConfig(filename=f"{self.name}.log", filemode='w', level=logging.INFO,
+                            format='%(asctime)s [%(levelname)s] %(message)s', datefmt="%Y.%m.%d %H:%M:%S")
 
         user_path = os.path.expanduser("~")
         if self.windows():
@@ -55,9 +57,6 @@ class RecordPool:
             "download.prompt_for_download": False,
             "download.directory_upgrade": True,
             "safebrowsing.enabled": True})
-
-        logging.basicConfig(filename=f"{self.name}.log", filemode='w', level=logging.INFO,
-                            format='%(asctime)s [%(levelname)s] %(message)s', datefmt="%Y.%m.%d %H:%M:%S")
 
     def check_free_disk_space(self, limit_in_mb=1024) -> bool:
         """Check that there is more free disk space left than the given limit. Default is 1024 megabytes."""

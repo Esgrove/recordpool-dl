@@ -3,7 +3,7 @@ from RecordPool import RecordPool
 
 class Beatjunkies(RecordPool):
     def __init__(self):
-        super().__init__("Beatjunkies", "BEATJUNKIES")
+        super().__init__(self.__class__.__name__, "BEATJUNKIES")
         self.url = "https://www.beatjunkies.com/record-pool/page/1/"
 
     def get_tracks(self, number=0) -> list:

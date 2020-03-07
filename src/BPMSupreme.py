@@ -14,7 +14,7 @@ from RecordPool import RecordPool
 
 class BPMSupreme(RecordPool):
     def __init__(self):
-        super().__init__("BPMSupreme", "BPMSUPREME")
+        super().__init__(self.__class__.__name__, "BPMSUPREME")
         self.url = "https://app.bpmsupreme.com/new-releases/classic/audio"
         self.wait_time = 10
         self.track_ignore = ("Short Edit",

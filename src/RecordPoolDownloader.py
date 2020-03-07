@@ -9,7 +9,7 @@ import sys
 import threading
 import traceback
 
-from colorprint import Color, print_bold, print_color
+from colorprint import Color, print_bold, print_color, print_error
 
 from Bandcamp import Bandcamp
 from Beatjunkies import Beatjunkies
@@ -32,7 +32,6 @@ class RecordPoolDownloader:
             raise RuntimeError(f"Unsupported record pool: {site}!")
 
         self.pool.start_driver()
-
         logging.info(f"Initialized {self.pool} on {self.pool.system_name()}")
         logging.info(f"Download path: '{self.pool.download_path}'")
 
@@ -118,8 +117,7 @@ def main(args):
         if options.get(ans):
             site = options[ans].lower()
         else:
-            print("Error. Give a valid option...")
-
+            print_error("Give a valid option...")
     try:
         downloader = RecordPoolDownloader(site)
         if site == "bandcamp":
@@ -129,14 +127,18 @@ def main(args):
         else:
             downloader.run_loop()
 
+    except KeyboardInterrupt:
+        print_bold("\nAborting...")
+        return
+
     except Exception:
         logging.exception("Exception raised!")
         error_type, error_value, trace = sys.exc_info()
         print_bold(f"Error: {error_type}", Color.red)
-        print_color(str(error_value), Color.red)
+        if error_value:
+            print_color(error_value, Color.red)
         for line in traceback.format_tb(trace):
             print_color(line, Color.yellow)
-
         return 1
 
 

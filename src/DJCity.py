@@ -6,7 +6,7 @@ from RecordPool import RecordPool
 
 class DJCity(RecordPool):
     def __init__(self):
-        super().__init__("DJCity", "DJCITY")
+        super().__init__(self.__class__.__name__, "DJCITY")
         self.url = "https://www.djcity.com/uk/digital/records.aspx?p=1"
 
         self.filter = ""

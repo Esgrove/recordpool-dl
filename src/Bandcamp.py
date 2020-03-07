@@ -10,7 +10,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 class Bandcamp(RecordPool):
     def __init__(self):
-        super().__init__("Bandcamp", "BANDCAMP")
+        super().__init__(self.__class__.__name__, "BANDCAMP")
         self.url = input("\nGive download URL:\n")
 
     def download(self, track):
