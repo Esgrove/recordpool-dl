@@ -3,6 +3,7 @@ Record Pool Downloader
 Akseli Lukkarila
 2019
 """
+import enum
 import logging
 import os
 import sys
@@ -15,18 +16,26 @@ from Bandcamp import Bandcamp
 from Beatjunkies import Beatjunkies
 from BPMSupreme import BPMSupreme
 from DJCity import DJCity
+from RecordPool import RecordPool
+
+
+class Site(enum.Enum):
+    BANDCAMP = 1,
+    BEATJUNKIES = 2,
+    BPMSUPREME = 3,
+    DJCITY = 4
 
 
 class RecordPoolDownloader:
     """Command line tool for recordpool web downloads."""
-    def __init__(self, site: str):
-        if site == "beatjunkies":
+    def __init__(self, site: Site):
+        if site == Site.BEATJUNKIES:
             self.pool = Beatjunkies()
-        elif site == "bpmsupreme":
+        elif site == Site.BPMSUPREME:
             self.pool = BPMSupreme()
-        elif site == "djcity":
+        elif site == Site.DJCITY:
             self.pool = DJCity()
-        elif site == "bandcamp":
+        elif site == Site.BANDCAMP:
             self.pool = Bandcamp()
         else:
             raise RuntimeError(f"Unsupported record pool: {site}!")
@@ -48,10 +57,6 @@ class RecordPoolDownloader:
                 self.single_page_loop()
         except ValueError:
             self.single_page_loop()
-
-    def single_page_download(self, number=0):
-        tracks = self.pool.download_page(number)
-        logging.info(f"Page {self.pool.current_num}: downloaded {tracks} files.")
 
     def single_page_loop(self):
         self.pool.update_current_page()
@@ -91,6 +96,10 @@ class RecordPoolDownloader:
         except ValueError:
             return
 
+    def single_page_download(self, number=0):
+        tracks = self.pool.download_page(number)
+        logging.info(f"Page {self.pool.current_num}: downloaded {tracks} files.")
+
     def play_notification_sound(self):
         """Play system notification sound without waiting for function call to finish."""
         threading.Thread(target=self._play_notification, args=(self.pool.mac_os(),)).start()
@@ -104,12 +113,16 @@ class RecordPoolDownloader:
             winsound.PlaySound("SystemExclamation", winsound.SND_ALIAS)
 
 
-def main(args):
+if __name__ == '__main__':
     print_bold("/////// RECORDPOOL AUTO-DL ///////", Color.green)
+    args = sys.argv[1:]
     site = None if not args else args[0].lower()
     while not site:
         print_bold("\nChoose record pool:")
-        options = dict(zip(("1", "2", "3", "4"), ("Bandcamp", "Beatjunkies", "BPMSupreme", "DJCity")))
+        pools = tuple(pool.__name__ for pool in RecordPool.__subclasses__())
+        options = dict(zip((str(i+1) for i in range(len(pools))), pools))
+        # arguably this would be cleaner for the current options but wanted to make it generalized and scalable
+        # options = dict(zip(("1", "2", "3", "4"), ("Bandcamp", "Beatjunkies", "BPMSupreme", "DJCity")))
         for key, value in options.items():
             print(f"{key}: {value}")
 
@@ -119,8 +132,13 @@ def main(args):
         else:
             print_error("Give a valid option...")
     try:
+        site = Site[site.upper()]
+    except KeyError:
+        print_error(f"Unsupported record pool: {site}!")
+        sys.exit()
+    try:
         downloader = RecordPoolDownloader(site)
-        if site == "bandcamp":
+        if site == Site.BANDCAMP:
             downloader.pool.download_page()
             downloader.pool.open_page("chrome://downloads/")
             input("Wait until downloads have finished and press a button...\n")
@@ -129,7 +147,7 @@ def main(args):
 
     except KeyboardInterrupt:
         print_bold("\nAborting...")
-        return
+        sys.exit()
 
     except Exception:
         logging.exception("Exception raised!")
@@ -139,8 +157,3 @@ def main(args):
             print_color(error_value, Color.red)
         for line in traceback.format_tb(trace):
             print_color(line, Color.yellow)
-        return 1
-
-
-if __name__ == '__main__':
-    main(sys.argv[1:])
