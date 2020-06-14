@@ -113,5 +113,3 @@ class BPMSupreme(RecordPool):
 
     def prepare_pool(self):
         input("Choose genres manually and press a key to continue...")
-
-
