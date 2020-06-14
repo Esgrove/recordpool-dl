@@ -44,7 +44,7 @@ class RecordPool:
 
         self.download_path = os.path.join(download_root, self.folder)
         if not os.path.exists(self.download_path):
-            os.makedirs(self.download_path)
+            os.makedirs(self.download_path, exist_ok=True)
 
         self.free_space_at_start, _ = self.free_disk_space()
 
