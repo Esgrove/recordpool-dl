@@ -21,7 +21,7 @@ class RecordPool:
         self.current_url = None
         self.current_num = None
         self.driver = None
-        self.total_tracks = 0
+        self.total_files_downloaded = 0
         self.url = ""
 
         logging.basicConfig(filename=f"{self.name}.log", filemode='w', level=logging.INFO,
@@ -83,7 +83,7 @@ class RecordPool:
         time.sleep(2)
 
         num_tracks = len(tracks)
-        self.total_tracks += num_tracks
+        self.total_files_downloaded += num_tracks
         return num_tracks
 
     def download(self, track):
@@ -129,7 +129,7 @@ class RecordPool:
         print_color(self.name, Color.cyan)
         free_space, _ = self.free_disk_space()
         total_size = self.free_space_at_start - free_space
-        msg = f"Total files downloaded: {self.total_tracks} / {total_size:.1f} MB"
+        msg = f"Total files downloaded: {self.total_files_downloaded} / {total_size:.1f} MB"
         logging.info(msg)
         print(msg, end="\n\n")
 
