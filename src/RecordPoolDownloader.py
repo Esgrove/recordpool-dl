@@ -20,6 +20,7 @@ from RecordPool import RecordPool
 
 
 class Site(enum.Enum):
+    """Supported websites."""
     BANDCAMP = 1,
     BEATJUNKIES = 2,
     BPMSUPREME = 3,
@@ -119,9 +120,10 @@ if __name__ == '__main__':
     site = None if not args else args[0].lower()
     while not site:
         print_bold("\nChoose record pool:")
+        # get all pool implementations automatically
         pools = tuple(pool.__name__ for pool in RecordPool.__subclasses__())
-        options = dict(zip((str(i+1) for i in range(len(pools))), pools))
-        # arguably this would be cleaner for the current options but wanted to make it generalized and scalable
+        options = dict(zip((str(i) for i in range(1, len(pools) + 1)), pools))
+        # arguably this would have been cleaner for the current options but wanted to make it generalized and scalable
         # options = dict(zip(("1", "2", "3", "4"), ("Bandcamp", "Beatjunkies", "BPMSupreme", "DJCity")))
         for key, value in options.items():
             print(f"{key}: {value}")
@@ -152,7 +154,7 @@ if __name__ == '__main__':
     except Exception:
         logging.exception("Exception raised!")
         error_type, error_value, trace = sys.exc_info()
-        print_bold(f"Error: {error_type}", Color.red)
+        print_color(f"Error: {error_type}", Color.red)
         if error_value:
             print_color(error_value, Color.red)
         for line in traceback.format_tb(trace):
