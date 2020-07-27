@@ -2,6 +2,7 @@ import time
 
 from colorprint import Color, print_color
 from RecordPool import RecordPool
+from tqdm import tqdm
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -17,23 +18,33 @@ class Bandcamp(RecordPool):
         self.driver.get(track)
         time.sleep(1)
 
-    def get_tracks(self, number=0) -> list:
-        tracks = []
+    def download_page(self, number=0) -> int:
+        # overridden to directly download files without using 'get_tracks'
+        if not self.check_free_disk_space():
+            raise OSError("Disk is full!")
+
         downloads = self.driver.find_elements_by_class_name("downloads")
         if not downloads:
             raise RuntimeError("No downloads found")
 
-        # TODO: async get download links
-        songs = downloads[0].find_elements_by_class_name("download-title")
-        for number, song in enumerate(songs, 1):
-            print(f"  {number}:", end=" ")
+        print_color("downloading files...", Color.yellow)
+        tracks = downloads[0].find_elements_by_class_name("download-title")
+        # TODO: get download links using async tasks instead of sequentially to speedup download
+        for song in tqdm(tracks):
             # wait for Bandcamp to prepare download
             button = WebDriverWait(song, 600).until(EC.element_to_be_clickable((By.CLASS_NAME, "item-button")))
             url = button.get_attribute("href")
-            tracks.append(url)
-            print_color("X", Color.green)
+            self.download(url)
 
-        return tracks
+        # wait a bit for downloads to finish
+        time.sleep(2)
+        num_tracks = len(tracks)
+        self.total_files_downloaded += num_tracks
+        return num_tracks
+
+    def get_tracks(self, number=0) -> list:
+        # not needed
+        return []
 
     def next_page(self) -> bool:
         # not needed
