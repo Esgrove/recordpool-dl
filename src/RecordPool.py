@@ -1,8 +1,8 @@
 import logging
 import os
 import platform
-import sys
 import shutil
+import sys
 import time
 
 from selenium import webdriver
@@ -15,12 +15,12 @@ from colorprint import Color, get_color, print_color
 class RecordPool:
     """Parent class for all recordpool implementations."""
     def __init__(self, name, folder_name):
-        self.name = name
-        self.folder = folder_name
-        self.system = platform.system().lower()
-        self.current_url = None
         self.current_num = None
+        self.current_url = None
         self.driver = None
+        self.folder = folder_name
+        self.name = name
+        self.system = platform.system().lower()
         self.total_files_downloaded = 0
         self.url = ""
 
@@ -32,12 +32,10 @@ class RecordPool:
             download_root = os.path.join("D:\\", "Dropbox", "DJ MUSIC SORT")
             chrome_profile = os.path.join(user_path, "AppData\\Local\\Google\\Chrome\\User Data")
             self.chrome_driver = "D:\\Dropbox\\CODE\\webdriver\\chromedriver.exe"
-
         elif self.mac_os():
             download_root = os.path.join(user_path, "Dropbox", "DJ MUSIC SORT")
             chrome_profile = os.path.join(user_path, r"Library/Application Support/Google/Chrome")
             self.chrome_driver = "/usr/local/bin/chromedriver"
-
         else:
             print_color(f"Unsupported OS: '{platform.system()}'", Color.red)
             sys.exit()
@@ -81,7 +79,6 @@ class RecordPool:
 
         # wait a bit for downloads to finish
         time.sleep(2)
-
         num_tracks = len(tracks)
         self.total_files_downloaded += num_tracks
         return num_tracks
@@ -148,13 +145,11 @@ class RecordPool:
             self.driver.implicitly_wait(0.5)
             self.driver.get(self.url)
             self.current_url = self.driver.current_url
-
         except InvalidArgumentException:
             print_color("\nError: Chrome already running. Close Chrome and try again...", Color.red)
             sys.exit()
 
         print(f"\nDownloader initialized for:\n{repr(self)}")
-
         self.prepare_pool()
 
     def update_current_page(self):

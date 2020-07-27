@@ -146,15 +146,13 @@ if __name__ == '__main__':
             input("Wait until downloads have finished and press a button...\n")
         else:
             downloader.run_loop()
-
     except KeyboardInterrupt:
         print_bold("\nAborting...")
         sys.exit()
-
     except Exception:
         logging.exception("Exception raised!")
         error_type, error_value, trace = sys.exc_info()
-        print_color(f"Error: {error_type}", Color.red)
+        print_error(error_type)
         if error_value:
             print_color(error_value, Color.red)
         for line in traceback.format_tb(trace):
