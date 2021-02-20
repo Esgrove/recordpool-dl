@@ -10,13 +10,12 @@ import sys
 import threading
 import traceback
 
-from colorprint import Color, print_bold, print_color, print_error
-
+from BPMSupreme import BPMSupreme
 from Bandcamp import Bandcamp
 from Beatjunkies import Beatjunkies
-from BPMSupreme import BPMSupreme
 from DJCity import DJCity
 from RecordPool import RecordPool
+from colorprint import Color, print_bold, print_color, print_error
 
 
 class Site(enum.Enum):
@@ -29,6 +28,7 @@ class Site(enum.Enum):
 
 class RecordPoolDownloader:
     """Command line tool for recordpool web downloads."""
+
     def __init__(self, site: Site):
         if site == Site.BEATJUNKIES:
             self.pool = Beatjunkies()

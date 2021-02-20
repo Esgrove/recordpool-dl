@@ -14,6 +14,7 @@ from colorprint import Color, get_color, print_color
 
 class RecordPool:
     """Parent class for all recordpool implementations."""
+
     def __init__(self, name, folder_name):
         self.current_num = None
         self.current_url = None
@@ -182,7 +183,7 @@ class RecordPool:
     def __repr__(self):
         free, ratio = self.free_disk_space()
         text = get_color(f"/// {self.name} ///\n", Color.cyan)
-        text += f"path: {get_color(self.download_path, Color.yellow)}\ndisk: {free/1024:.1f} GB ({ratio:.1%}) free"
+        text += f"path: {get_color(self.download_path, Color.yellow)}\ndisk: {free / 1024:.1f} GB ({ratio:.1%}) free"
         return text
 
     def __del__(self):

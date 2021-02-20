@@ -1,12 +1,12 @@
 import time
 
-from colorprint import Color, print_color
-from RecordPool import RecordPool
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 from tqdm import tqdm
 
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+from RecordPool import RecordPool
+from colorprint import Color, print_color
 
 
 class Bandcamp(RecordPool):

@@ -1,7 +1,7 @@
 import random
 
-from colorprint import print_color, print_bold, get_color, Color
 from RecordPool import RecordPool
+from colorprint import print_color, print_bold, get_color, Color
 
 
 class DJCity(RecordPool):

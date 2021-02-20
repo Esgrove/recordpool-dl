@@ -1,13 +1,12 @@
 import time
 
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-
 from selenium.common.exceptions import ElementClickInterceptedException
 from selenium.common.exceptions import ElementNotInteractableException
-from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import StaleElementReferenceException
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 
 from RecordPool import RecordPool
 
@@ -64,7 +63,8 @@ class BPMSupreme(RecordPool):
             return
 
     def get_page_number(self) -> int:
-        WebDriverWait(self.driver, self.wait_time).until(EC.visibility_of_element_located((By.CLASS_NAME, "pagination")))
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.visibility_of_element_located((By.CLASS_NAME, "pagination")))
         container = self.driver.find_element_by_class_name("pagination")
         page = container.find_element_by_class_name("selected")
         number = int(page.text)
@@ -74,7 +74,8 @@ class BPMSupreme(RecordPool):
         tracks = []
         try:
             # wait for songs to load
-            WebDriverWait(self.driver, self.wait_time).until(EC.visibility_of_element_located((By.CLASS_NAME, "table-media")))
+            WebDriverWait(self.driver, self.wait_time).until(
+                EC.visibility_of_element_located((By.CLASS_NAME, "table-media")))
         except TimeoutException:
             print(f"No tracks found after waiting for {self.wait_time} seconds...")
             return tracks

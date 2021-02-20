@@ -4,6 +4,7 @@ Akseli Lukkarila
 2019
 """
 import colorama
+
 colorama.init()
 
 
