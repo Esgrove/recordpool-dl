@@ -16,39 +16,45 @@ class BPMSupreme(RecordPool):
         super().__init__(self.__class__.__name__, "BPMSUPREME")
         self.url = "https://app.bpmsupreme.com/new-releases/classic/audio"
         self.wait_time = 10
-        self.track_ignore = ("Short Edit",
-                             "Clean Short Edit",
-                             "Dirty Short Edit",
-                             "Quick Hit Clean",
-                             "Quick Hit",
-                             "Quick Hit Dirty")
+        self.track_ignore = (
+            "Short Edit",
+            "Clean Short Edit",
+            "Dirty Short Edit",
+            "Quick Hit Clean",
+            "Quick Hit",
+            "Quick Hit Dirty",
+        )
 
-        self.genre_ignore = ("Alternative",
-                             "Bachata",
-                             "Banda",
-                             "Country",
-                             "Corrido",
-                             "Cumbia",
-                             "Cumbias",
-                             "Dancehall",
-                             "Dembow",
-                             "Drum Loops",
-                             "Latin Pop",
-                             "Mambo",
-                             "Mariachi",
-                             "Norteno",
-                             "Reggae",
-                             "Reggaeton",
-                             "Rock",
-                             "Salsa",
-                             "Scratch Tools",
-                             "Soca")
+        self.genre_ignore = (
+            "Alternative",
+            "Bachata",
+            "Banda",
+            "Country",
+            "Corrido",
+            "Cumbia",
+            "Cumbias",
+            "Dancehall",
+            "Dembow",
+            "Drum Loops",
+            "Latin Pop",
+            "Mambo",
+            "Mariachi",
+            "Norteno",
+            "Reggae",
+            "Reggaeton",
+            "Rock",
+            "Salsa",
+            "Scratch Tools",
+            "Soca",
+        )
 
     def click(self, element):
         self.driver.execute_script("arguments[0].click()", element)
 
     def close_error_popup(self):
-        elements = self.driver.find_elements_by_xpath(".//*[@class='sweet-alert showSweetAlert visible']")
+        elements = self.driver.find_elements_by_xpath(
+            ".//*[@class='sweet-alert showSweetAlert visible']"
+        )
         if elements:
             button = elements[0].find_element_by_class_name("confirm")
             self.click(button)
@@ -64,7 +70,8 @@ class BPMSupreme(RecordPool):
 
     def get_page_number(self) -> int:
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.visibility_of_element_located((By.CLASS_NAME, "pagination")))
+            EC.visibility_of_element_located((By.CLASS_NAME, "pagination"))
+        )
         container = self.driver.find_element_by_class_name("pagination")
         page = container.find_element_by_class_name("selected")
         number = int(page.text)
@@ -75,7 +82,8 @@ class BPMSupreme(RecordPool):
         try:
             # wait for songs to load
             WebDriverWait(self.driver, self.wait_time).until(
-                EC.visibility_of_element_located((By.CLASS_NAME, "table-media")))
+                EC.visibility_of_element_located((By.CLASS_NAME, "table-media"))
+            )
         except TimeoutException:
             print(f"No tracks found after waiting for {self.wait_time} seconds...")
             return tracks
@@ -106,7 +114,11 @@ class BPMSupreme(RecordPool):
             element = container.find_element_by_xpath("//*[contains(text(), '›')]")
             self.click(element)
 
-        except (ElementNotInteractableException, ElementClickInterceptedException, TimeoutException):
+        except (
+            ElementNotInteractableException,
+            ElementClickInterceptedException,
+            TimeoutException,
+        ):
             return False
 
         self.update_current_page()

@@ -25,17 +25,26 @@ class RecordPool:
         self.total_files_downloaded = 0
         self.url = ""
 
-        logging.basicConfig(filename=f"{self.name}.log", filemode='w', level=logging.INFO,
-                            format='%(asctime)s [%(levelname)s] %(message)s', datefmt="%Y.%m.%d %H:%M:%S")
+        logging.basicConfig(
+            filename=f"{self.name}.log",
+            filemode="w",
+            level=logging.INFO,
+            format="%(asctime)s [%(levelname)s] %(message)s",
+            datefmt="%Y.%m.%d %H:%M:%S",
+        )
 
         user_path = os.path.expanduser("~")
         if self.windows():
             download_root = os.path.join("D:\\", "Dropbox", "DJ MUSIC SORT")
-            chrome_profile = os.path.join(user_path, "AppData\\Local\\Google\\Chrome\\User Data")
+            chrome_profile = os.path.join(
+                user_path, "AppData\\Local\\Google\\Chrome\\User Data"
+            )
             self.chrome_driver = "D:\\Dropbox\\CODE\\webdriver\\chromedriver.exe"
         elif self.mac_os():
             download_root = os.path.join(user_path, "Dropbox", "DJ MUSIC SORT")
-            chrome_profile = os.path.join(user_path, r"Library/Application Support/Google/Chrome")
+            chrome_profile = os.path.join(
+                user_path, r"Library/Application Support/Google/Chrome"
+            )
             self.chrome_driver = "/usr/local/bin/chromedriver"
         else:
             print_color(f"Unsupported OS: '{platform.system()}'", Color.red)
@@ -51,11 +60,15 @@ class RecordPool:
         self.chrome_options.add_argument("user-data-dir=" + chrome_profile)
         self.chrome_options.add_argument("profile-directory=Default")
         self.chrome_options.add_argument("disable-infobars")
-        self.chrome_options.add_experimental_option("prefs", {
-            "download.default_directory": self.download_path,
-            "download.prompt_for_download": False,
-            "download.directory_upgrade": True,
-            "safebrowsing.enabled": True})
+        self.chrome_options.add_experimental_option(
+            "prefs",
+            {
+                "download.default_directory": self.download_path,
+                "download.prompt_for_download": False,
+                "download.directory_upgrade": True,
+                "safebrowsing.enabled": True,
+            },
+        )
 
     def check_free_disk_space(self, limit_in_mb=1024) -> bool:
         """Check that there is more free disk space left than the given limit. Default is 1024 megabytes."""
@@ -142,12 +155,17 @@ class RecordPool:
     def start_driver(self):
         """Open chromedriver and prepare pool for downloading."""
         try:
-            self.driver = webdriver.Chrome(executable_path=self.chrome_driver, options=self.chrome_options)
+            self.driver = webdriver.Chrome(
+                executable_path=self.chrome_driver, options=self.chrome_options
+            )
             self.driver.implicitly_wait(0.5)
             self.driver.get(self.url)
             self.current_url = self.driver.current_url
         except InvalidArgumentException:
-            print_color("\nError: Chrome already running. Close Chrome and try again...", Color.red)
+            print_color(
+                "\nError: Chrome already running. Close Chrome and try again...",
+                Color.red,
+            )
             sys.exit()
 
         print(f"\nDownloader initialized for:\n{repr(self)}")

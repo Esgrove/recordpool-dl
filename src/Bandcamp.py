@@ -32,7 +32,9 @@ class Bandcamp(RecordPool):
         # TODO: get download links using async tasks instead of sequentially to speedup download
         for song in tqdm(tracks):
             # wait for Bandcamp to prepare download
-            button = WebDriverWait(song, 600).until(EC.element_to_be_clickable((By.CLASS_NAME, "item-button")))
+            button = WebDriverWait(song, 600).until(
+                EC.element_to_be_clickable((By.CLASS_NAME, "item-button"))
+            )
             url = button.get_attribute("href")
             self.download(url)
 

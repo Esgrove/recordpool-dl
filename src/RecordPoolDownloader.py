@@ -20,9 +20,10 @@ from colorprint import Color, print_bold, print_color, print_error
 
 class Site(enum.Enum):
     """Supported websites."""
-    BANDCAMP = 1,
-    BEATJUNKIES = 2,
-    BPMSUPREME = 3,
+
+    BANDCAMP = (1,)
+    BEATJUNKIES = (2,)
+    BPMSUPREME = (3,)
     DJCITY = 4
 
 
@@ -64,7 +65,11 @@ class RecordPoolDownloader:
         while True:
             print_bold(f"--- Page: {self.pool.current_num} ---")
             try:
-                number = int(input("Give number of tracks to download from current page, 0 = all\n"))
+                number = int(
+                    input(
+                        "Give number of tracks to download from current page, 0 = all\n"
+                    )
+                )
                 number = max(0, number)
             except ValueError:
                 number = 0
@@ -103,18 +108,21 @@ class RecordPoolDownloader:
 
     def play_notification_sound(self):
         """Play system notification sound without waiting for function call to finish."""
-        threading.Thread(target=self._play_notification, args=(self.pool.mac_os(),)).start()
+        threading.Thread(
+            target=self._play_notification, args=(self.pool.mac_os(),)
+        ).start()
 
     @staticmethod
     def _play_notification(mac: bool):
         if mac:
-            os.system('afplay /System/Library/Sounds/Glass.aiff')
+            os.system("afplay /System/Library/Sounds/Glass.aiff")
         else:
             import winsound
+
             winsound.PlaySound("SystemExclamation", winsound.SND_ALIAS)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print_bold("/////// RECORDPOOL AUTO-DL ///////", Color.green)
     args = sys.argv[1:]
     site = None if not args else args[0].lower()
