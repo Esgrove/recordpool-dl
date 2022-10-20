@@ -1,11 +1,13 @@
 import time
 
-from selenium.common.exceptions import ElementClickInterceptedException
-from selenium.common.exceptions import ElementNotInteractableException
-from selenium.common.exceptions import StaleElementReferenceException
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import (
+    ElementClickInterceptedException,
+    ElementNotInteractableException,
+    StaleElementReferenceException,
+    TimeoutException,
+)
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.ui import WebDriverWait
 
 from RecordPool import RecordPool
@@ -52,9 +54,7 @@ class BPMSupreme(RecordPool):
         self.driver.execute_script("arguments[0].click()", element)
 
     def close_error_popup(self):
-        elements = self.driver.find_elements_by_xpath(
-            ".//*[@class='sweet-alert showSweetAlert visible']"
-        )
+        elements = self.driver.find_elements_by_xpath(".//*[@class='sweet-alert showSweetAlert visible']")
         if elements:
             button = elements[0].find_element_by_class_name("confirm")
             self.click(button)
@@ -70,7 +70,7 @@ class BPMSupreme(RecordPool):
 
     def get_page_number(self) -> int:
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.visibility_of_element_located((By.CLASS_NAME, "pagination"))
+            expected_conditions.visibility_of_element_located((By.CLASS_NAME, "pagination"))
         )
         container = self.driver.find_element_by_class_name("pagination")
         page = container.find_element_by_class_name("selected")
@@ -82,14 +82,14 @@ class BPMSupreme(RecordPool):
         try:
             # wait for songs to load
             WebDriverWait(self.driver, self.wait_time).until(
-                EC.visibility_of_element_located((By.CLASS_NAME, "table-media"))
+                expected_conditions.visibility_of_element_located((By.CLASS_NAME, "table-media"))
             )
         except TimeoutException:
             print(f"No tracks found after waiting for {self.wait_time} seconds...")
             return tracks
 
         playlist = self.driver.find_element_by_class_name("table-media")
-        songs = playlist.find_elements_by_class_name("row-container")
+        songs = playlist.find_elements(by=By.CLASS_NAME, value="row-container")
         num_max = min(number, len(songs)) if number > 0 else len(songs)
         for song in songs[:num_max]:
             genre = song.find_element_by_xpath(".//*[@class='col-category link']")

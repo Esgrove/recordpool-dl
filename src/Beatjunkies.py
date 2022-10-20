@@ -1,3 +1,5 @@
+from selenium.webdriver.common.by import By
+
 from RecordPool import RecordPool
 
 
@@ -8,12 +10,8 @@ class Beatjunkies(RecordPool):
 
     def get_tracks(self, number=0) -> list:
         tracks = []
-        playlist = self.driver.find_element_by_css_selector(
-            ".widget.widget-beats.playlist"
-        )
-        songs = playlist.find_elements_by_css_selector(
-            ".glyphicon.glyphicon-arrow-down.icon-right.inline-exclude"
-        )
+        playlist = self.driver.find_element_by_css_selector(".widget.widget-beats.playlist")
+        songs = playlist.find_elements_by_css_selector(".glyphicon.glyphicon-arrow-down.icon-right.inline-exclude")
         num = min(number, len(songs)) if number > 0 else len(songs)
         for song in songs[:num]:
             url = song.get_attribute("href")
@@ -28,7 +26,7 @@ class Beatjunkies(RecordPool):
         if self.driver.current_url != self.current_url:
             self.driver.get(self.current_url)
 
-        link = self.driver.find_elements_by_class_name("nextpostslink")
+        link = self.driver.find_elements(by=By.CLASS_NAME, value="nextpostslink")
         if not link:
             return False
 

@@ -7,7 +7,9 @@ import time
 
 from selenium import webdriver
 from selenium.common.exceptions import InvalidArgumentException
+from selenium.webdriver.chrome.service import Service as ChromeService
 from tqdm import tqdm
+from webdriver_manager.chrome import ChromeDriverManager
 
 from colorprint import Color, get_color, print_color
 
@@ -36,15 +38,11 @@ class RecordPool:
         user_path = os.path.expanduser("~")
         if self.windows():
             download_root = os.path.join("D:\\", "Dropbox", "DJ MUSIC SORT")
-            chrome_profile = os.path.join(
-                user_path, "AppData\\Local\\Google\\Chrome\\User Data"
-            )
+            chrome_profile = os.path.join(user_path, "AppData\\Local\\Google\\Chrome\\User Data")
             self.chrome_driver = "D:\\Dropbox\\CODE\\webdriver\\chromedriver.exe"
         elif self.mac_os():
             download_root = os.path.join(user_path, "Dropbox", "DJ MUSIC SORT")
-            chrome_profile = os.path.join(
-                user_path, r"Library/Application Support/Google/Chrome"
-            )
+            chrome_profile = os.path.join(user_path, r"Library/Application Support/Google/Chrome")
             self.chrome_driver = "/usr/local/bin/chromedriver"
         else:
             print_color(f"Unsupported OS: '{platform.system()}'", Color.red)
@@ -136,6 +134,7 @@ class RecordPool:
         pass
 
     def print_stats(self):
+        """Print download statistics."""
         print("--------------------")
         print_color(self.name, Color.cyan)
         free_space, _ = self.free_disk_space()
@@ -156,7 +155,7 @@ class RecordPool:
         """Open chromedriver and prepare pool for downloading."""
         try:
             self.driver = webdriver.Chrome(
-                executable_path=self.chrome_driver, options=self.chrome_options
+                service=ChromeService(ChromeDriverManager().install()), options=self.chrome_options
             )
             self.driver.implicitly_wait(0.5)
             self.driver.get(self.url)
@@ -183,9 +182,11 @@ class RecordPool:
             self.print_stats()
 
     def mac_os(self) -> bool:
+        """Return true if on macOS."""
         return self.system == "darwin"
 
     def windows(self) -> bool:
+        """Returns true if on Windows."""
         return self.system == "windows"
 
     def system_name(self) -> str:
