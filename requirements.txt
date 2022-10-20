@@ -1,4 +1,10 @@
-colorama>=0.4.1
-selenium>=3.141.0
-tqdm>=4.32.2
-urllib3>=1.25.3
+colorama==0.4.5
+selenium==4.5.0
+tqdm==4.64.1
+urllib3==1.26.12
+webdriver-manager==3.8.4
+
+# dev requirements
+black
+flake8
+isort
