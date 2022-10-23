@@ -21,9 +21,9 @@ from RecordPool import RecordPool
 class Site(enum.Enum):
     """Supported websites."""
 
-    BANDCAMP = (1,)
-    BEATJUNKIES = (2,)
-    BPMSUPREME = (3,)
+    BANDCAMP = 1
+    BEATJUNKIES = 2
+    BPMSUPREME = 3
     DJCITY = 4
 
 

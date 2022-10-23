@@ -35,15 +35,14 @@ class RecordPool:
             datefmt="%Y.%m.%d %H:%M:%S",
         )
 
+        # TODO: use Pathlib instead of os.path
         user_path = os.path.expanduser("~")
         if self.windows():
             download_root = os.path.join("D:\\", "Dropbox", "DJ MUSIC SORT")
             chrome_profile = os.path.join(user_path, "AppData\\Local\\Google\\Chrome\\User Data")
-            self.chrome_driver = "D:\\Dropbox\\CODE\\webdriver\\chromedriver.exe"
         elif self.mac_os():
             download_root = os.path.join(user_path, "Dropbox", "DJ MUSIC SORT")
             chrome_profile = os.path.join(user_path, r"Library/Application Support/Google/Chrome")
-            self.chrome_driver = "/usr/local/bin/chromedriver"
         else:
             print_color(f"Unsupported OS: '{platform.system()}'", Color.red)
             sys.exit()
@@ -100,7 +99,7 @@ class RecordPool:
         # Default implementation. Override if needed.
         self.driver.get(track)
 
-    def free_disk_space(self):
+    def free_disk_space(self) -> tuple[int, float]:
         """Returns free disk space in download path as a tuple of megabytes and ratio of free space left."""
         total, _, free = shutil.disk_usage(self.download_path)
         free_mb = free / (1024 * 1024)
@@ -206,4 +205,5 @@ class RecordPool:
         return text
 
     def __del__(self):
+        """Clean up webdriver and print stats automatically when quitting."""
         self.quit()
