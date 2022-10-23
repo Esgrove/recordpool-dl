@@ -13,7 +13,7 @@ import traceback
 from Bandcamp import Bandcamp
 from Beatjunkies import Beatjunkies
 from BPMSupreme import BPMSupreme
-from colorprint import Color, print_bold, print_color, print_error
+from colorprint import Color, print_bold, print_color, print_error, print_error_and_exit
 from DJCity import DJCity
 from RecordPool import RecordPool
 
@@ -138,8 +138,7 @@ if __name__ == "__main__":
     try:
         site = Site[site.upper()]
     except KeyError:
-        print_error(f"Unsupported record pool: {site}!")
-        sys.exit()
+        print_error_and_exit(f"Unsupported record pool: {site}!")
     try:
         downloader = RecordPoolDownloader(site)
         if site == Site.BANDCAMP:

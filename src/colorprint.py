@@ -3,6 +3,8 @@ Color print helper
 Akseli Lukkarila
 2019 - 2022
 """
+import sys
+
 import colorama
 
 colorama.init(strip=False, convert=False)
@@ -42,6 +44,12 @@ def print_color(text: str, color=Color.white, bold=False, **kwargs):
     - flush: A Boolean, specifying if the output is flushed (True) or buffered (False). Default is False
     """
     print(get_color(text, color, bold), **kwargs)
+
+
+def print_error_and_exit(text: str, exit_code=1):
+    """Print error message and exit with given exit code."""
+    print_error(text)
+    sys.exit(exit_code)
 
 
 def print_error(text: str, bold=False, **kwargs):

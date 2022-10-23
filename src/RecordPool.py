@@ -2,7 +2,6 @@ import logging
 import os
 import platform
 import shutil
-import sys
 import time
 
 from selenium import webdriver
@@ -11,7 +10,7 @@ from selenium.webdriver.chrome.service import Service as ChromeService
 from tqdm import tqdm
 from webdriver_manager.chrome import ChromeDriverManager
 
-from colorprint import Color, get_color, print_color
+from colorprint import Color, get_color, print_color, print_error_and_exit
 
 
 class RecordPool:
@@ -44,8 +43,7 @@ class RecordPool:
             download_root = os.path.join(user_path, "Dropbox", "DJ MUSIC SORT")
             chrome_profile = os.path.join(user_path, r"Library/Application Support/Google/Chrome")
         else:
-            print_color(f"Unsupported OS: '{platform.system()}'", Color.red)
-            sys.exit()
+            print_error_and_exit(f"Unsupported OS: '{platform.system()}'")
 
         self.download_path = os.path.join(download_root, self.folder)
         if not os.path.exists(self.download_path):
@@ -54,7 +52,7 @@ class RecordPool:
         self.free_space_at_start, _ = self.free_disk_space()
 
         self.chrome_options = webdriver.ChromeOptions()
-        self.chrome_options.add_argument("user-data-dir=" + chrome_profile)
+        self.chrome_options.add_argument(f"user-data-dir={chrome_profile}")
         self.chrome_options.add_argument("profile-directory=Default")
         self.chrome_options.add_argument("disable-infobars")
         self.chrome_options.add_experimental_option(
@@ -160,11 +158,7 @@ class RecordPool:
             self.driver.get(self.url)
             self.current_url = self.driver.current_url
         except InvalidArgumentException:
-            print_color(
-                "\nError: Chrome already running. Close Chrome and try again...",
-                Color.red,
-            )
-            sys.exit()
+            print_error_and_exit("\nError: Chrome already running. Close Chrome and try again...")
 
         print(f"\nDownloader initialized for:\n{repr(self)}")
         self.prepare_pool()
