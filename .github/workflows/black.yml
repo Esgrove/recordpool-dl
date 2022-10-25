@@ -1,15 +1,18 @@
----
 name: Black
 
 on:
+  push:
   pull_request:
-    paths:
-      - '**.py'
+    branches:
+      - master
 
 jobs:
   format:
     runs-on: ubuntu-latest
     steps:
+      - run: echo "Triggered by a ${{ github.event_name }} event"
+      - run: echo "Branch ${{ github.ref }}, repository ${{ github.repository }}"
+
       - name: Check out repository
         uses: actions/checkout@v3
 
