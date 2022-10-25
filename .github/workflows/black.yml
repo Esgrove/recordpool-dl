@@ -1,12 +1,17 @@
 name: Black
 
+# Run either when pushing directly to main/master or in a PR targeting main/master
 on:
   push:
-  pull_request:
-    # Only run when PR is targeting master
     branches:
       - master
-    # Only run when Python files have been touched
+      - main
+    paths:
+      - '**.py'
+  pull_request:
+    branches:
+      - master
+      - main
     paths:
       - '**.py'
 
@@ -14,10 +19,10 @@ jobs:
   format:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Triggered by a ${{ github.event_name }} event"
-
       - name: Check out repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Check changed files
         id: changed-files
@@ -25,13 +30,21 @@ jobs:
         with:
           files: '**/*.py'
 
+      - name: List all changed files
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            echo "$file"
+          done
+
       - name: Set up Python environment
-        if: ${{ steps.changed-files.output.any_changed }} == 'true'
+        if: steps.changed-files.outputs.any_changed == 'true'
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
       - name: Black
+        if: steps.changed-files.outputs.any_changed == 'true'
         uses: psf/black@stable
         with:
           options: "--check --verbose --diff --color"
