@@ -3,6 +3,7 @@ Record Pool Downloader
 Akseli Lukkarila
 2019
 """
+
 import enum
 import logging
 import os
@@ -13,7 +14,7 @@ import traceback
 from Bandcamp import Bandcamp
 from Beatjunkies import Beatjunkies
 from BPMSupreme import BPMSupreme
-from colorprint import Color, print_bold, print_color, print_error, print_error_and_exit
+from colorprint import Color, print_bold, print_error, print_error_and_exit, print_red, print_yellow
 from DJCity import DJCity
 from RecordPool import RecordPool
 
@@ -72,7 +73,7 @@ class RecordPoolDownloader:
 
             self.single_page_download(number)
             if not self.pool.next_page():
-                print_color("No more pages!", Color.red)
+                print_red("No more pages!")
                 break
 
             self.play_notification_sound()
@@ -86,7 +87,7 @@ class RecordPoolDownloader:
             print_bold(f"--- Page: {self.pool.current_num} / {last_page} ---")
             self.single_page_download()
             if not self.pool.next_page():
-                print_color("No more pages!", Color.red)
+                print_red("No more pages!")
                 return
 
         print_bold("Continue for pages?")
@@ -98,8 +99,9 @@ class RecordPoolDownloader:
         except ValueError:
             return
 
-    def single_page_download(self, number=0):
-        tracks = self.pool.download_page(number)
+    def single_page_download(self, num_to_download=0):
+        """Download tracks from a single page."""
+        tracks = self.pool.download_page(num_to_download)
         logging.info(f"Page {self.pool.current_num}: downloaded {tracks} files.")
 
     def play_notification_sound(self):
@@ -122,10 +124,10 @@ if __name__ == "__main__":
     site = None if not args else args[0].lower()
     while not site:
         print_bold("\nChoose record pool:")
-        # get all pool implementations automatically
+        # Get all pool implementations automatically
         pools = tuple(pool.__name__ for pool in RecordPool.__subclasses__())
         options = dict(zip((str(i) for i in range(1, len(pools) + 1)), pools))
-        # arguably this would have been cleaner for the current options but wanted to make it generalized and scalable
+        # Arguably this would have been cleaner for the current options but wanted to make it generic and scalable
         # options = dict(zip(("1", "2", "3", "4"), ("Bandcamp", "Beatjunkies", "BPMSupreme", "DJCity")))
         for key, value in options.items():
             print(f"{key}: {value}")
@@ -155,6 +157,6 @@ if __name__ == "__main__":
         error_type, error_value, trace = sys.exc_info()
         print_error(error_type)
         if error_value:
-            print_color(error_value, Color.red)
+            print_red(error_value)
         for line in traceback.format_tb(trace):
-            print_color(line, Color.yellow)
+            print_yellow(line)

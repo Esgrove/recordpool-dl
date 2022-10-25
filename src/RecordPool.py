@@ -71,13 +71,13 @@ class RecordPool:
         logging.debug(f"free disk space: {free:.1f} MB ({ratio:.1%})")
         return free > limit_in_mb
 
-    def download_page(self, number=0) -> int:
-        """Download all main files on current page, or optionally only the "number" first tracks."""
+    def download_page(self, num_to_download=0) -> int:
+        """Download all main files on current page, or optionally only the "num_to_download" first tracks."""
         if not self.check_free_disk_space():
             raise OSError("Disk is full!")
 
         print_color("Getting download links...", Color.yellow)
-        tracks = self.get_tracks(number)
+        tracks = self.get_tracks(num_to_download)
         if not tracks:
             print_color("No files to download!\n", Color.red)
             return 0
