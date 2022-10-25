@@ -3,6 +3,7 @@ Color print helper
 Akseli Lukkarila
 2019 - 2022
 """
+
 import sys
 
 import colorama

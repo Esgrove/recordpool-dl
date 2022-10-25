@@ -5,6 +5,6 @@ urllib3==1.26.12
 webdriver-manager==3.8.4
 
 # dev requirements
-black
-flake8
-isort
+black==22.10.0
+flake8==5.0.4
+isort==5.10.1

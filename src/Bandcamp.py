@@ -25,7 +25,7 @@ class Bandcamp(RecordPool):
 
             time.sleep(1)
 
-    def download_page(self, number=0) -> int:
+    def download_page(self, num_to_download=0) -> int:
         # overridden to directly download files without using 'get_tracks'
         if not self.check_free_disk_space():
             raise OSError("Disk is full!")
