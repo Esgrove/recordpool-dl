@@ -10,7 +10,7 @@ jobs:
   format:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out source repository
+      - name: Check out repository
         uses: actions/checkout@v3
 
       - name: Check changed files
