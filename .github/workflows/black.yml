@@ -3,15 +3,18 @@ name: Black
 on:
   push:
   pull_request:
+    # Only run when PR is targeting master
     branches:
       - master
+    # Only run when Python files have been touched
+    paths:
+      - '**.py'
 
 jobs:
   format:
     runs-on: ubuntu-latest
     steps:
       - run: echo "Triggered by a ${{ github.event_name }} event"
-      - run: echo "Branch ${{ github.ref }}, repository ${{ github.repository }}"
 
       - name: Check out repository
         uses: actions/checkout@v3
