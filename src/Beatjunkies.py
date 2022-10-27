@@ -1,11 +1,12 @@
 from selenium.webdriver.common.by import By
 
 from RecordPool import RecordPool
+from utils import Site
 
 
 class Beatjunkies(RecordPool):
     def __init__(self):
-        super().__init__(self.__class__.__name__, "BEATJUNKIES")
+        super().__init__(Site.BEATJUNKIES)
         self.url = "https://www.beatjunkies.com/record-pool/page/1/"
 
     def get_tracks(self, number=0) -> list:
@@ -21,7 +22,7 @@ class Beatjunkies(RecordPool):
         return tracks
 
     def next_page(self):
-        self.current_num += 1
+        self.current_page_number += 1
 
         if self.driver.current_url != self.current_url:
             self.driver.get(self.current_url)

@@ -7,11 +7,12 @@ from tqdm import tqdm
 
 from colorprint import Color, print_color
 from RecordPool import RecordPool
+from utils import Site
 
 
 class Bandcamp(RecordPool):
     def __init__(self):
-        super().__init__(self.__class__.__name__, "BANDCAMP")
+        super().__init__(Site.BANDCAMP)
         self.url = input("\nGive download URL:\n")
 
     def download(self, track):

@@ -11,11 +11,12 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.ui import WebDriverWait
 
 from RecordPool import RecordPool
+from utils import Site
 
 
 class BPMSupreme(RecordPool):
     def __init__(self):
-        super().__init__(self.__class__.__name__, "BPMSUPREME")
+        super().__init__(Site.BPMSUPREME)
         self.url = "https://app.bpmsupreme.com/new-releases/classic/audio"
         self.wait_time = 10
         self.track_ignore = (
@@ -113,7 +114,6 @@ class BPMSupreme(RecordPool):
         try:
             element = container.find_element_by_xpath("//*[contains(text(), '›')]")
             self.click(element)
-
         except (
             ElementNotInteractableException,
             ElementClickInterceptedException,

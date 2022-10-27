@@ -3,6 +3,7 @@ import os
 import platform
 import shutil
 import time
+from typing import Optional
 
 from selenium import webdriver
 from selenium.common.exceptions import InvalidArgumentException
@@ -10,22 +11,25 @@ from selenium.webdriver.chrome.service import Service as ChromeService
 from tqdm import tqdm
 from webdriver_manager.chrome import ChromeDriverManager
 
-from colorprint import Color, get_color, print_color, print_error_and_exit
+from colorprint import Color, get_color, print_color, print_error_and_exit, print_magenta, print_red
+from utils import Platform, Site
 
 
 class RecordPool:
     """Parent class for all recordpool implementations."""
 
-    def __init__(self, name, folder_name):
-        self.current_num = None
-        self.current_url = None
-        self.driver = None
-        self.folder = folder_name
-        self.name = name
-        self.system = platform.system().lower()
-        self.total_files_downloaded = 0
-        self.url = ""
+    def __init__(self, site: Site, download_folder_name: str = None):
+        self.current_page_number: int = 0
+        self.current_url: str = ""
+        self.driver: webdriver = None
+        self.folder: str = download_folder_name if download_folder_name else site.name
+        self.name = str(site)
+        self.platform: Platform = Platform.get()
+        self.site: Site = site
+        self.total_files_downloaded: int = 0
+        self.url: str = ""
 
+        # Setup log file and format
         logging.basicConfig(
             filename=f"{self.name}.log",
             filemode="w",
@@ -36,14 +40,15 @@ class RecordPool:
 
         # TODO: use Pathlib instead of os.path
         user_path = os.path.expanduser("~")
-        if self.windows():
-            download_root = os.path.join("D:\\", "Dropbox", "DJ MUSIC SORT")
-            chrome_profile = os.path.join(user_path, "AppData\\Local\\Google\\Chrome\\User Data")
-        elif self.mac_os():
+        if self.platform.is_linux():
+            print_error_and_exit("Linux is not yet supported")
+
+        if self.platform.is_mac():
             download_root = os.path.join(user_path, "Dropbox", "DJ MUSIC SORT")
             chrome_profile = os.path.join(user_path, r"Library/Application Support/Google/Chrome")
-        else:
-            print_error_and_exit(f"Unsupported OS: '{platform.system()}'")
+        elif self.platform.is_windows():
+            download_root = os.path.join("D:\\", "Dropbox", "DJ MUSIC SORT")
+            chrome_profile = os.path.join(user_path, "AppData\\Local\\Google\\Chrome\\User Data")
 
         self.download_path = os.path.join(download_root, self.folder)
         if not os.path.exists(self.download_path):
@@ -76,13 +81,14 @@ class RecordPool:
         if not self.check_free_disk_space():
             raise OSError("Disk is full!")
 
-        print_color("Getting download links...", Color.yellow)
+        print_magenta("Getting download links...")
         tracks = self.get_tracks(num_to_download)
         if not tracks:
-            print_color("No files to download!\n", Color.red)
+            print_red("No files to download!\n")
             return 0
 
-        print_color("downloading files...", Color.yellow)
+        print_magenta("Downloading files...")
+        # tqdm creates a progress bar
         for track in tqdm(tracks):
             self.download(track)
 
@@ -108,7 +114,7 @@ class RecordPool:
         """Get the current page number."""
         # Default implementation. Override if needed.
         digits = [int(s) for s in self.current_url.split("/") if s.isdigit()]
-        page = 1 if not digits else digits[0]
+        page = digits[0] if digits else 1
         return page
 
     def get_tracks(self, number=0) -> list:
@@ -146,7 +152,7 @@ class RecordPool:
 
     def set_start_page(self, page_number):
         """Set current page number to given number."""
-        self.current_num = page_number
+        self.current_page_number = page_number
 
     def start_driver(self):
         """Open chromedriver and prepare pool for downloading."""
@@ -166,7 +172,7 @@ class RecordPool:
     def update_current_page(self):
         """Update page variables (url and page number) to match currently loaded page."""
         self.current_url = self.driver.current_url
-        self.current_num = self.get_page_number()
+        self.current_page_number = self.get_page_number()
 
     def quit(self):
         """Close driver and print download stats."""
@@ -174,20 +180,9 @@ class RecordPool:
             self.driver.quit()
             self.print_stats()
 
-    def mac_os(self) -> bool:
-        """Return true if on macOS."""
-        return self.system == "darwin"
-
-    def windows(self) -> bool:
-        """Returns true if on Windows."""
-        return self.system == "windows"
-
     def system_name(self) -> str:
         """Returns a formatted string for the platform name."""
-        if self.mac_os():
-            return f"MacOS {platform.mac_ver()[0]}"
-        else:
-            return f"Windows {platform.win32_ver()[0]} {platform.win32_ver()[1].split('.')[-1]}"
+        return repr(self.platform)
 
     def __str__(self):
         return self.name
