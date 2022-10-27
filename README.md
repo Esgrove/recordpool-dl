@@ -25,7 +25,11 @@ and just delete all the tracks I don't like.
 
 ## Implementation
 
-* `RecordPoolDownloader` contains main and runs the download with a common interface for all recordpools.  
-* `RecordPool` is an abstract (aka virtual) base class that provides the common interface, which is inherited by all recordpool-specific classes.  
-* `Bandcamp, Beatjunkies, BPMSupreme, DJCity` are subclasses of `RecordPool` that implement the common functions,
+* `RecordPoolDownloader` contains main and runs the download with a common interface for all recordpools.
+* `RecordPool` is an abstract (aka virtual) base class that provides the common interface, which is inherited by all recordpool-specific classes.
+* `Bandcamp`, `Beatjunkies`, `BPMSupreme`, `DJCity` are subclasses of `RecordPool` that implement the common functions,
   like *get_tracks* and *download_track* for the specific website (if and when a custom implementation is required for each function).
+
+It is arguably a bit over-engineered,
+but since this project doubled as a learning opportunity for Selenium and web automation for me, 
+I would say over-engineering is to be expected :bowtie:
