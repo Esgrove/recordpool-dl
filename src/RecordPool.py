@@ -155,7 +155,8 @@ class RecordPool:
         self.current_page_number = page_number
 
     def start_driver(self):
-        """Open chromedriver and prepare pool for downloading."""
+        """Open webdriver and prepare pool for downloading."""
+        print_magenta("Starting ChromeDriver...")
         try:
             self.driver = webdriver.Chrome(
                 service=ChromeService(ChromeDriverManager().install()), options=self.chrome_options
