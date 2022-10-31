@@ -4,7 +4,7 @@ tqdm==4.64.1
 urllib3==1.26.12
 webdriver-manager==3.8.4
 
-# dev requirements
+# Dev dependencies
 black==22.10.0
 flake8==5.0.4
 isort==5.10.1
