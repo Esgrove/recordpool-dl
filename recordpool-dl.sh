@@ -14,7 +14,7 @@ init_options() {
                 exit 1
                 ;;
             --verbose)
-                #
+                # Print shell commands
                 set -x
                 ;;
         esac
