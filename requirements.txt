@@ -1,6 +1,6 @@
 colorama==0.4.6
 pytest==7.2.1
-selenium==4.6.1
+selenium==4.8.0
 tqdm==4.64.1
 urllib3==1.26.14
 webdriver-manager==3.8.5
