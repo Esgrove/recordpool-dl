@@ -8,4 +8,4 @@ webdriver-manager==3.8.5
 # Dev dependencies
 black==23.1.0
 flake8==6.0.0
-isort==5.11.3
+isort==5.12.0
