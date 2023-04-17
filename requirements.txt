@@ -3,7 +3,7 @@ pytest==7.3.0
 selenium==4.8.3
 tqdm==4.65.0
 urllib3==1.26.15
-webdriver-manager==3.8.5
+webdriver-manager==3.8.6
 
 # Dev dependencies
 black==23.3.0
