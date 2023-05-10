@@ -1,7 +1,7 @@
-#!/usr/bin/env bash
-set -e
+#!/bin/bash
+set -eo pipefail
 
-USAGE="USAGE: ./recordpool-dl.sh"
+USAGE="USAGE: $0"
 
 # Get absolute path to repo root
 REPO_ROOT=$(git rev-parse --show-toplevel || (cd "$(dirname "${BASH_SOURCE[0]}")" && pwd))
