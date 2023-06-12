@@ -1,5 +1,7 @@
 # Recordpool Downloader
 
+**NOTE (06/2023):** I am no longer actively maintaining this since DJCity updated their site to work much better.
+
 A command-line tool for automatically downloading music tracks from DJ [recordpool](https://en.wikipedia.org/wiki/Music_pool) websites.
 Implemented with Python 3 using [Selenium](https://www.seleniumhq.org/) for interacting with the websites. 
 I use Chromedriver but other browsers could be used as well.
