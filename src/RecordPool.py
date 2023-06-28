@@ -1,9 +1,7 @@
 import logging
 import os
-import platform
 import shutil
 import time
-from typing import Optional
 
 from selenium import webdriver
 from selenium.common.exceptions import InvalidArgumentException

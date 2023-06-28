@@ -9,7 +9,7 @@ extend-exclude = '''venv*'''
 # https://github.com/charliermarsh/ruff#configuration
 target-version = "py311"
 line-length = 120
-select = ["E", "F", "W", "I", "N", "UP"]
+select = ["E", "F", "W", "N", "UP"] # "I"
 ignore = []
 
 # Allow autofix for all enabled rules (when `--fix`) is provided.
@@ -21,7 +21,7 @@ fixable = [
     "E",
     "F",
     "G",
-    "I",
+    #"I",
     "N",
     "Q",
     "S",
@@ -92,6 +92,7 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 # https://beta.ruff.rs/docs/settings/#isort
 combine-as-imports = true
 lines-between-types = 1
+section-order = ["future", "standard-library", "third-party", "first-party", "local-folder"]
 
 [tool.isort]
 # https://pycqa.github.io/isort/docs/configuration/options.html

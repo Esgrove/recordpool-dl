@@ -7,7 +7,7 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.ui import WebDriverWait
 from tqdm import tqdm
 
-from colorprint import Color, print_color, print_error, print_magenta, print_yellow
+from colorprint import print_error, print_magenta, print_yellow
 from RecordPool import RecordPool
 from utils import Site
 
