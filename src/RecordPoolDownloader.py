@@ -9,12 +9,11 @@ import os
 import sys
 import threading
 import traceback
-from typing import Optional
 
 from Bandcamp import Bandcamp
 from Beatjunkies import Beatjunkies
 from BPMSupreme import BPMSupreme
-from colorprint import Color, print_bold, print_error, print_error_and_exit, print_red, print_yellow, print_cyan
+from colorprint import print_bold, print_cyan, print_error, print_error_and_exit, print_red, print_yellow
 from DJCity import DJCity
 from RecordPool import RecordPool
 from utils import Site
@@ -71,7 +70,7 @@ class RecordPoolDownloader:
                 break
 
             self.play_notification_sound()
-            if not input("Continue?\n").lower() in ("y", "1"):
+            if input("Continue?\n").lower() not in ("y", "1"):
                 break
 
     def multi_page_loop(self, pages=1):
@@ -122,7 +121,7 @@ class RecordPoolDownloader:
 if __name__ == "__main__":
     print_cyan("RECORDPOOL DL", bold=True)
     args = sys.argv[1:]
-    recordpool_site: Optional[Site] = None
+    recordpool_site: Site | None = None
     # Try reading recordpool to use from first argument
     # TODO: use click or typer here for proper CLI handling
     site_name: str = args[0].strip() if args else None
