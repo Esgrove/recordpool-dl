@@ -23,7 +23,7 @@ from utils import Site
 class RecordPoolDownloader:
     """Command line tool for recordpool web downloads."""
 
-    def __init__(self, site: Site):
+    def __init__(self, site: Site, url=""):
         if site == Site.BEATJUNKIES:
             self.pool = Beatjunkies()
         elif site == Site.BPMSUPREME:
@@ -31,7 +31,7 @@ class RecordPoolDownloader:
         elif site == Site.DJCITY:
             self.pool = DJCity()
         elif site == Site.BANDCAMP:
-            self.pool = Bandcamp()
+            self.pool = Bandcamp(url)
         else:
             raise RuntimeError(f"Unsupported record pool: {site}")
 
@@ -112,6 +112,12 @@ class RecordPoolDownloader:
 
             winsound.PlaySound("SystemExclamation", winsound.SND_ALIAS)
 
+    def download_bandcamp_order(self):
+        """Download Bandcamp order."""
+        self.pool.download_page()
+        self.pool.open_page("chrome://downloads/")
+        input("Wait until downloads have finished and press a button...\n")
+
 
 if __name__ == "__main__":
     print_cyan("RECORDPOOL DL", bold=True)
@@ -120,32 +126,36 @@ if __name__ == "__main__":
     # Try reading recordpool to use from first argument
     # TODO: use click or typer here for proper CLI handling
     site_name: str = args[0].strip() if args else None
-    while not site_name:
-        print_bold("\nChoose record pool:")
-        # Get all pool implementations automatically
-        pools: tuple[str] = tuple(pool.__name__ for pool in RecordPool.__subclasses__())
-        options = dict(zip((str(i) for i in range(1, len(pools) + 1)), pools))
-        # Arguably this would have been cleaner for the current options but wanted to make it generic and scalable
-        # options = dict(zip(("1", "2", "3", "4"), ("Bandcamp", "Beatjunkies", "BPMSupreme", "DJCity")))
-        for key, value in options.items():
-            print(f"{key}: {value}")
+    if "https://bandcamp.com/download" in site_name:
+        recordpool_site = Site.BANDCAMP
+    else:
+        while not site_name:
+            print_bold("\nChoose record pool:")
+            # Get all pool implementations automatically
+            pools: tuple[str] = tuple(pool.__name__ for pool in RecordPool.__subclasses__())
+            options = dict(zip((str(i) for i in range(1, len(pools) + 1)), pools))
+            # Arguably this would have been cleaner for the current options but wanted to make it generic and scalable
+            # options = dict(zip(("1", "2", "3", "4"), ("Bandcamp", "Beatjunkies", "BPMSupreme", "DJCity")))
+            for key, value in options.items():
+                print(f"{key}: {value}")
 
-        ans = input()
-        if options.get(ans):
-            site_name = options[ans]
-        else:
-            print_error("Give a valid option...")
+            ans = input()
+            if options.get(ans):
+                site_name = options[ans]
+            else:
+                print_error("Give a valid option...")
+        try:
+            recordpool_site = Site[site_name.upper()]
+        except KeyError:
+            print_error_and_exit(f"Unsupported record pool: {site_name}")
+
     try:
-        recordpool_site = Site[site_name.upper()]
-    except KeyError:
-        print_error_and_exit(f"Unsupported record pool: {site_name}")
-    try:
-        downloader = RecordPoolDownloader(recordpool_site)
         if recordpool_site == Site.BANDCAMP:
-            downloader.pool.download_page()
-            downloader.pool.open_page("chrome://downloads/")
-            input("Wait until downloads have finished and press a button...\n")
+            url = site_name if site_name.startswith("https://") else input("\nGive Bandcamp download URL:\n")
+            downloader = RecordPoolDownloader(recordpool_site, url=url)
+            downloader.download_bandcamp_order()
         else:
+            downloader = RecordPoolDownloader(recordpool_site)
             downloader.run_loop()
     except KeyboardInterrupt:
         print_bold("\nAborted")
