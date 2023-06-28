@@ -14,7 +14,7 @@ from typing import Optional
 from Bandcamp import Bandcamp
 from Beatjunkies import Beatjunkies
 from BPMSupreme import BPMSupreme
-from colorprint import Color, print_bold, print_error, print_error_and_exit, print_red, print_yellow
+from colorprint import Color, print_bold, print_error, print_error_and_exit, print_red, print_yellow, print_cyan
 from DJCity import DJCity
 from RecordPool import RecordPool
 from utils import Site
@@ -114,7 +114,7 @@ class RecordPoolDownloader:
 
 
 if __name__ == "__main__":
-    print_bold("/////// RECORDPOOL AUTO-DL ///////", Color.green)
+    print_cyan("RECORDPOOL DL", bold=True)
     args = sys.argv[1:]
     recordpool_site: Optional[Site] = None
     # Try reading recordpool to use from first argument
@@ -148,7 +148,7 @@ if __name__ == "__main__":
         else:
             downloader.run_loop()
     except KeyboardInterrupt:
-        print_bold("\nAborting...")
+        print_bold("\nAborted")
         sys.exit()
     except Exception:
         logging.exception("Exception raised!")

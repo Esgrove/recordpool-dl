@@ -167,7 +167,7 @@ class RecordPool:
         except InvalidArgumentException:
             print_error_and_exit("\nError: Chrome already running. Close Chrome and try again...")
 
-        print(f"\nDownloader initialized for:\n{repr(self)}")
+        print(f"\n{repr(self)}")
         self.prepare_pool()
 
     def update_current_page(self):
@@ -190,8 +190,9 @@ class RecordPool:
 
     def __repr__(self):
         free, ratio = self.free_disk_space()
-        text = get_color(f"/// {self.name} ///\n", Color.cyan)
-        text += f"path: {get_color(self.download_path, Color.yellow)}\ndisk: {free / 1024:.1f} GB ({ratio:.1%}) free"
+        text = get_color(f"{self.name}\n", Color.cyan)
+        text += f"path: {get_color(self.download_path, Color.yellow)}\n"
+        text += f"disk: {free / 1024:.1f} GB ({ratio:.1%}) free"
         return text
 
     def __del__(self):
