@@ -116,6 +116,7 @@ class RecordPoolDownloader:
         self.pool.download_page()
         self.pool.open_page("chrome://downloads/")
         input("Wait until downloads have finished and press a button...\n")
+        self.pool.open_downloads_directory()
 
 
 if __name__ == "__main__":

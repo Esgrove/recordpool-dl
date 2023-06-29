@@ -2,6 +2,7 @@ import logging
 import os
 import shutil
 import time
+import subprocess
 
 from selenium import webdriver
 from selenium.common.exceptions import InvalidArgumentException
@@ -182,6 +183,13 @@ class RecordPool:
     def system_name(self) -> str:
         """Returns a formatted string for the platform name."""
         return repr(self.platform)
+
+    def open_downloads_directory(self):
+        print(f"Opening downloads dir: {get_color(self.download_path, Color.yellow)}")
+        if self.platform == Platform.MAC:
+            subprocess.run(["open", "--", self.download_path])
+        elif self.platform == Platform.WINDOWS:
+            subprocess.run(["explorer", self.download_path])
 
     def __str__(self):
         return self.name
