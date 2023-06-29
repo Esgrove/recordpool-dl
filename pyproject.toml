@@ -21,7 +21,7 @@ fixable = [
     "E",
     "F",
     "G",
-    #"I",
+    #"I",  disable isort rules
     "N",
     "Q",
     "S",
@@ -92,7 +92,13 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 # https://beta.ruff.rs/docs/settings/#isort
 combine-as-imports = true
 lines-between-types = 1
-section-order = ["future", "standard-library", "third-party", "first-party", "local-folder"]
+section-order = [
+    "future",
+    "standard-library",
+    "third-party",
+    "first-party",
+    "local-folder",
+]
 
 [tool.isort]
 # https://pycqa.github.io/isort/docs/configuration/options.html
