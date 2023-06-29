@@ -155,7 +155,7 @@ if __name__ == "__main__":
         recordpool_site = Site.BANDCAMP if "https://bandcamp.com/download" in site_name else get_pool_to_use(site_name)
         try:
             if recordpool_site == Site.BANDCAMP:
-                url = site_name if site_name.startswith("https://") else input("\nGive Bandcamp download URL:\n")
+                url = site_name if site_name.startswith("https://") else input("\nGive Bandcamp order URL:\n")
                 downloader = RecordPoolDownloader(recordpool_site, url=url)
                 downloader.download_bandcamp_order()
             else:
