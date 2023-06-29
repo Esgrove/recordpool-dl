@@ -188,7 +188,7 @@ class RecordPool:
 
     def __repr__(self):
         free, ratio = self.free_disk_space()
-        text = get_color(f"{self.name}\n", Color.cyan)
+        text = "pool: " + get_color(f"{self.name}\n", Color.cyan)
         text += f"path: {get_color(self.download_path, Color.yellow)}\n"
         text += f"disk: {free / 1024:.1f} GB ({ratio:.1%}) free"
         return text

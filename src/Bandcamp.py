@@ -7,7 +7,7 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.ui import WebDriverWait
 from tqdm import tqdm
 
-from colorprint import print_error, print_magenta, print_yellow
+from colorprint import print_error, print_magenta
 from RecordPool import RecordPool
 from utils import Site
 
@@ -45,9 +45,9 @@ class Bandcamp(RecordPool):
             print_error("No items to download. Something is probably broken...")
             sys.exit(1)
 
-        print_yellow(f"Found {len(tracks)} items")
+        logging.info(f"Found {len(tracks)} items to download")
 
-        print_magenta("Downloading...")
+        print_magenta(f"Downloading {len(tracks)} items...")
         # TODO: get download links using async tasks instead of sequentially to speedup download
         for song in tqdm(tracks, unit="item"):
             # wait for Bandcamp to prepare download
@@ -78,7 +78,7 @@ class Bandcamp(RecordPool):
         self.driver.implicitly_wait(10)
         elements = self.driver.find_elements(by=By.CLASS_NAME, value="bfd-download-dropdown")
         if elements:
-            logging.info("Expanding downloads...")
+            logging.info("Expanding downloads")
             elements[0].click()
         else:
             logging.info("Download expand element not found")
