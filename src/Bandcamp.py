@@ -74,7 +74,7 @@ class Bandcamp(RecordPool):
 
     def prepare_pool(self):
         # expand downloads if needed
-        logging.info("Checking to expand downloads...")
+        logging.info("Checking to expand downloads")
         self.driver.implicitly_wait(10)
         elements = self.driver.find_elements(by=By.CLASS_NAME, value="bfd-download-dropdown")
         if elements:
