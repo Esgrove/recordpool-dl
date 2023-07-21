@@ -18,8 +18,8 @@ class DJCity(RecordPool):
         self.genre_map = dict(zip(self.genres, ("c1", "c2", "c3", "c4", "c5", "c6", "c8")))
 
     def get_tracks(self, number=0) -> list:
-        playlist = self.driver.find_element_by_css_selector(".float_left.page_left")
-        links = playlist.find_elements_by_css_selector(".downloadBtn")
+        playlist = self.driver.find_element(By.CSS_SELECTOR, ".float_left.page_left")
+        links = playlist.find_elements(By.CSS_SELECTOR, ".downloadBtn")
         num = min(number, len(links)) if number > 0 else len(links)
         track_links = [url for url in (link.get_attribute("href") for link in links[:num]) if url]
 
@@ -29,16 +29,16 @@ class DJCity(RecordPool):
             print(f"{page} / {total_pages}", end="\r", flush=True)
             self.driver.get(link)
             # DJCity requires you to rate the song in order to download it
-            if self.driver.find_elements_by_css_selector(".rating-stars"):
-                stars = self.driver.find_element_by_css_selector(".rating-stars")
-                stars.find_element_by_css_selector(f'[data-value="{random.randint(3, 5)}"]').click()
+            if self.driver.find_elements(By.CSS_SELECTOR, ".rating-stars"):
+                stars = self.driver.find_element(By.CSS_SELECTOR, ".rating-stars")
+                stars.find_element(By.CSS_SELECTOR, f'[data-value="{random.randint(3, 5)}"]').click()
             else:
                 # already reviewed -> skip
                 continue
 
-            downloads = self.driver.find_elements_by_css_selector(".float_right.reviw_tdonw")
+            downloads = self.driver.find_elements(By.CSS_SELECTOR, ".float_right.reviw_tdonw")
             for download in downloads:
-                url = download.find_element_by_css_selector("a").get_attribute("href")
+                url = download.find_element(By.CSS_SELECTOR, "a").get_attribute("href")
                 if url:
                     tracks.append(url)
 
