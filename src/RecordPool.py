@@ -1,8 +1,8 @@
 import logging
 import os
 import shutil
-import time
 import subprocess
+import time
 
 from selenium import webdriver
 from selenium.common.exceptions import InvalidArgumentException
