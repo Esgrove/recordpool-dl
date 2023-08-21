@@ -6,7 +6,7 @@
 
 :warning: **NOTE (06/2023):** I am no longer actively maintaining this since DJCity updated their site to work much better.
 I made this tool for own use and do not offer any support or help for others to run it.
-I only use it for Bandcamp currently...
+I only use it for Bandcamp currently, the pool interactions are likely outdated...
 
 A command-line tool for automatically downloading music tracks from DJ [recordpool](https://en.wikipedia.org/wiki/Music_pool) websites.
 Implemented with Python 3 using [Selenium](https://www.seleniumhq.org/) for interacting with the websites.
