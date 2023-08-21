@@ -1,6 +1,11 @@
 # Recordpool Downloader
 
-**NOTE (06/2023):** I am no longer actively maintaining this since DJCity updated their site to work much better.
+[![Poetry](https://img.shields.io/endpoint?url=https://python-poetry.org/badge/v0.json)](https://python-poetry.org/)
+[![black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+
+:warning: **NOTE (06/2023):** I am no longer actively maintaining this since DJCity updated their site to work much better.
+I made this tool for own use and do not offer any support or help for others to run it.
 I only use it for Bandcamp currently...
 
 A command-line tool for automatically downloading music tracks from DJ [recordpool](https://en.wikipedia.org/wiki/Music_pool) websites.
