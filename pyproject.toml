@@ -35,6 +35,8 @@ extend-exclude = '''venv*'''
 # https://github.com/charliermarsh/ruff#configuration
 target-version = "py311"
 line-length = 120
+
+[tool.ruff.lint]
 select = ["E", "F", "W", "N", "UP"] # "I"
 ignore = []
 
@@ -114,7 +116,7 @@ per-file-ignores = {}
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 # https://beta.ruff.rs/docs/settings/#isort
 combine-as-imports = true
 lines-between-types = 1
