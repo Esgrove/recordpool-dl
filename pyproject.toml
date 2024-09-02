@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "recordpool-dl"
-version = "2.1.0"
+version = "2.1.1"
 description = "Web automation tool for automatic DJ recordpool song downloads."
 authors = ["Akseli Lukkarila <esgrove@outlook.com>"]
 readme = "README.md"
@@ -15,10 +15,7 @@ tqdm = "^4.66.3"
 webdriver-manager = "^3.8.6"
 
 [tool.poetry.group.dev.dependencies]
-black = "^24.3.0"
-isort = "^5.12.0"
-pyupgrade = "^3.7.0"
-ruff = "^0.0.278"
+ruff = "^0.6.3"
 
 [build-system]
 requires = ["poetry-core"]
@@ -27,18 +24,51 @@ build-backend = "poetry.core.masonry.api"
 [tool.black]
 # https://black.readthedocs.io/en/stable/usage_and_configuration/the_basics.html#configuration-via-a-file
 line-length = 120
-target-version = ['py311']
+target-version = ["py311", "py312"]
 include = '\.pyi?$'
-extend-exclude = '''venv*'''
+extend-exclude = '''
+(
+    venv*
+)
+'''
 
 [tool.ruff]
 # https://github.com/charliermarsh/ruff#configuration
+include = ["*.py", "*.pyi", "**/pyproject.toml"]
+extend-include = ["*.ipynb"]
 target-version = "py311"
 line-length = 120
 
 [tool.ruff.lint]
-select = ["E", "F", "W", "N", "UP"] # "I"
+exclude = [
+    "__pypackages__",
+    "_build",
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "*.ipynb",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv*",
+]
 ignore = []
+per-file-ignores = {}
+# https://docs.astral.sh/ruff/rules/
+select = ["E4", "E7", "E9", "F", "W", "N", "UP", "I"]
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 # Allow autofix for all enabled rules (when `--fix`) is provided.
 fixable = [
@@ -49,7 +79,7 @@ fixable = [
     "E",
     "F",
     "G",
-    #"I",  disable isort rules
+    "I",
     "N",
     "Q",
     "S",
@@ -89,37 +119,12 @@ fixable = [
 ]
 unfixable = []
 
-# Exclude a variety of commonly ignored directories.
-exclude = [
-    ".bzr",
-    ".direnv",
-    ".eggs",
-    ".git",
-    ".hg",
-    ".mypy_cache",
-    ".nox",
-    ".pants.d",
-    ".ruff_cache",
-    ".svn",
-    ".tox",
-    ".venv",
-    "__pypackages__",
-    "_build",
-    "buck-out",
-    "build",
-    "dist",
-    "node_modules",
-    "venv*",
-]
-per-file-ignores = {}
-
-# Allow unused variables when underscore-prefixed.
-dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
-
 [tool.ruff.lint.isort]
-# https://beta.ruff.rs/docs/settings/#isort
+# https://docs.astral.sh/ruff/settings/#lintisort
 combine-as-imports = true
 lines-between-types = 1
+order-by-type = true
+known-first-party = ["src"]
 section-order = [
     "future",
     "standard-library",
@@ -141,5 +146,5 @@ include_trailing_comma = true
 line_length = 120
 multi_line_output = 3
 py_version = 311
-sections = ['FUTURE', 'STDLIB', 'THIRDPARTY', 'FIRSTPARTY', 'LOCALFOLDER']
+sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
 use_parentheses = true

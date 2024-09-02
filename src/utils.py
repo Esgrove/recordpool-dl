@@ -1,4 +1,5 @@
 import platform
+
 from enum import Enum
 from typing import Self
 
